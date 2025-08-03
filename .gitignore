@@ -1,0 +1,26 @@
+# Ignoruj Unity buildy i cache – działa dla client/
+client/[Ll]ibrary/
+client/[Tt]emp/
+client/[Oo]bj/
+client/[Bb]uild/
+client/[Ll]ogs/
+client/[Mm]emoryCaptures/
+
+# Ignoruj pliki Visual Studio / Rider
+client/*.csproj
+client/*.sln
+client/*.user
+client/*.pidb
+client/*.unityproj
+client/.vs
+
+# Ignoruj systemowe
+.DS_Store
+Thumbs.db
+
+# Inne buildy
+*.exe
+*.apk
+*.aab
+*.zip
+*.log
