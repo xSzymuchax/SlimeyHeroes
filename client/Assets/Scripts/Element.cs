@@ -19,15 +19,18 @@ namespace Assets.Scripts
         private int _y;
         public ElementType elementType;
 
+        public int X { get => _x; set => _x = value; }
+        public int Y { get => _y; set => _y = value; }
+
         public void SetPosition(Position2D position2D)
         {
-            _x = position2D.X;
-            _y = position2D.Y;
+            X = position2D.X;
+            Y = position2D.Y;
         }
 
         private void OnMouseDown()
         {
-            Position2D position2D = new Position2D(_x, _y);
+            Position2D position2D = new Position2D(X, Y);
             GameController.Instance.ElementPressed(position2D);
         }
     }

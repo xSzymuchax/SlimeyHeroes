@@ -26,8 +26,6 @@ public class GameController : MonoBehaviour
         float xOffset = -boardWidth / 2;
         float yOffset = -boardHeigth / 2;
 
-        string debugString = "";
-
         for (int i = 0; i < boardWidth; i++)
         {
             for (int j = 0; j < boardHeigth; j++)
@@ -37,19 +35,16 @@ public class GameController : MonoBehaviour
                 selectedPrefab = elementPrefabs[randomChoice];
 
                 Vector3 elementPosition = new Vector3(
-                    boardCenter.transform.position.x + xOffset + j,
-                    boardCenter.transform.position.y + yOffset + i,
+                    boardCenter.transform.position.x + xOffset + i,
+                    boardCenter.transform.position.y + yOffset + j,
                     boardCenter.transform.position.z);
                 
                 GameObject go = Instantiate(selectedPrefab, elementPosition, Quaternion.identity);
                 go.GetComponent<Element>().SetPosition(new Position2D(i,j));
                 gameboard[i, j] = go;
-
-                debugString += $"({i}, {j}, {go.GetComponent<Element>().elementType})";
             }
-            debugString += "\n";
         }
-        Debug.Log(debugString);
+        DebugShowGameboard();
     }
 
     public void ElementPressed(Position2D position2D)
@@ -65,7 +60,68 @@ public class GameController : MonoBehaviour
 
         Debug.Log(debugString);
         CollectElements(positions);
+        FixGameboard();
         //Destroy(go);
+    }
+
+    private void FixColumn(int columnIndex)
+    {
+        int firstNull = -1;
+        for (int j = 0; j < boardHeigth; j++)
+        {
+            if (gameboard[columnIndex, j] == null)
+            {
+                firstNull = j;
+                break;
+            }
+                
+        }
+
+        if (firstNull == -1)
+            return;
+
+        int firstElement = -1;
+        for (int j = firstNull+1; j < boardHeigth; j++)
+        {
+            if (gameboard[columnIndex, j] != null)
+            {
+                firstElement = j;
+                break;
+            }
+                
+        }
+
+        if (firstElement == -1)
+            return;
+
+        int gap = firstElement - firstNull;
+        for (int j = 0; j < gap; j++)
+        {
+            if (firstElement + j >= boardHeigth)
+                return;
+
+            gameboard[columnIndex, firstNull+j] = gameboard[columnIndex, firstElement+j];
+            gameboard[columnIndex, firstElement + j] = null;
+
+            if (gameboard[columnIndex, firstNull + j] != null)
+                gameboard[columnIndex, firstNull + j].GetComponent<Element>().SetPosition(new Position2D(columnIndex, firstNull + j));  
+        }
+    }
+
+    private void FixGameboard()
+    {
+        for (int i = 0; i < boardWidth; i++)
+        {
+            for (int j = 0; j < boardHeigth; j++)
+            {
+                if (gameboard[i,j] == null)
+                {
+                    FixColumn(i);
+                }
+            }
+        }
+
+        DebugShowGameboard();
     }
 
     private void RecursiveGroupFinder(List<Position2D> positions, bool[,] fieldChecked, int x, int y, ElementType type)
@@ -125,7 +181,26 @@ public class GameController : MonoBehaviour
             gameboard[p2d.X, p2d.Y] = null;
             Destroy(go);
         }
-            
     }
 
+    private void DebugShowGameboard()
+    {
+        string debugString = "";
+        for (int i = 0; i < boardWidth; i++)
+        {
+            for (int j = 0; j < boardHeigth; j++)
+            {
+                if (gameboard[i, j] != null)
+                {
+                    Element e = gameboard[i, j].GetComponent<Element>();
+                    debugString += $"\t({e.X}, {e.Y}, {e.elementType}) ";
+                }
+                else
+                    debugString += "\tNULL ";
+            }
+            debugString += "\n";
+        }
+
+        Debug.Log(debugString);
+    }
 }
