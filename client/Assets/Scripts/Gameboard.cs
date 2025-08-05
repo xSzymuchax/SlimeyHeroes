@@ -43,7 +43,15 @@ namespace Assets.Scripts
                 boardCenter.transform.position.z);
 
             GameObject go = Instantiate(selectedPrefab, elementPosition, Quaternion.identity);
-            go.GetComponent<Element>().SetPosition(new Position2D(x_position, y_position));
+            Element e = go.GetComponent<Element>();
+            Vector3 targetPosition = new Vector3(
+                    e.gameObject.transform.position.x,
+                    e.gameObject.transform.position.y - bonusYOffset,
+                    e.gameObject.transform.position.z
+            );
+
+            e.SetPosition(new Position2D(x_position, y_position));
+            e.FallToPosition(targetPosition);
 
             return go;
         }
@@ -116,13 +124,19 @@ namespace Assets.Scripts
                 if (firstElement + j >= boardHeigth)
                     return;
 
-                // gameboard[columnIndex, firstNull + j]        -> target
-                // gameboard[columnIndex, firstElement + j]     -> start
+                // animation for existing pieces
+                Element e = gameboard[columnIndex, firstElement + j].GetComponent<Element>();
+                e.FallToPosition(new Vector3(
+                    e.gameObject.transform.position.x,
+                    e.gameObject.transform.position.y - gap,
+                    e.gameObject.transform.position.z
+                    ));
+
                 gameboard[columnIndex, firstNull + j] = gameboard[columnIndex, firstElement + j];
                 gameboard[columnIndex, firstElement + j] = null;
 
                 if (gameboard[columnIndex, firstNull + j] != null)
-                    gameboard[columnIndex, firstNull + j].GetComponent<Element>().SetPosition(new Position2D(columnIndex, firstNull + j));
+                    e.SetPosition(new Position2D(columnIndex, firstNull + j));
 
             }
         }
