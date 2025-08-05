@@ -116,11 +116,14 @@ namespace Assets.Scripts
                 if (firstElement + j >= boardHeigth)
                     return;
 
+                // gameboard[columnIndex, firstNull + j]        -> target
+                // gameboard[columnIndex, firstElement + j]     -> start
                 gameboard[columnIndex, firstNull + j] = gameboard[columnIndex, firstElement + j];
                 gameboard[columnIndex, firstElement + j] = null;
 
                 if (gameboard[columnIndex, firstNull + j] != null)
                     gameboard[columnIndex, firstNull + j].GetComponent<Element>().SetPosition(new Position2D(columnIndex, firstNull + j));
+
             }
         }
 

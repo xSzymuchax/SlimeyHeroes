@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,7 @@ namespace Assets.Scripts
     {
         private int _x;
         private int _y;
+        private float _fallingAnimationDuration = 0.3f;
         public ElementType elementType;
 
         public int X { get => _x; set => _x = value; }
@@ -32,6 +34,27 @@ namespace Assets.Scripts
         {
             Position2D position2D = new Position2D(X, Y);
             GameController.Instance.ElementPressed(position2D);
+        }
+
+        public void FallToPosition(Vector3 targetPosition)
+        {
+            StopAllCoroutines();
+            StartCoroutine(FallAnimation(targetPosition));
+        }
+
+        private IEnumerator FallAnimation(Vector3 targetPosition)
+        {
+            Vector3 startPosition = transform.position;
+            float elapsed = 0f;
+
+            while (elapsed < _fallingAnimationDuration)
+            {
+                transform.position = Vector3.Lerp(startPosition, targetPosition, elapsed / _fallingAnimationDuration);
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            transform.position = targetPosition;
         }
     }
 }
