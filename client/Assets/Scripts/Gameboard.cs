@@ -13,12 +13,15 @@ namespace Assets.Scripts
         public int boardHeigth = 6;
         public Transform boardCenter;
         public GameObject[] elementPrefabs;
+        private float _maxComboTime;
+        private Coroutine _fixCooutine;
 
-        public Gameboard(int width, int heigth, GameObject[] prefabs)
+        public void Init(int width, int heigth, GameObject[] prefabs, float maxComboTime)
         {
             boardWidth = width;
             boardHeigth = heigth;
             elementPrefabs = prefabs;
+            _maxComboTime = maxComboTime;
             boardCenter = GameObject.Find("BoardCenter").transform;
             FillGameboard();
         }
@@ -71,6 +74,12 @@ namespace Assets.Scripts
             DebugShowGameboard();
         }
 
+        private IEnumerator FixGameboardAfter(float maxComboTime)
+        {
+            yield return new WaitForSeconds(maxComboTime);
+            FixGameboard();
+        }
+
         public void ElementPressed(Position2D position2D)
         {
             List<Position2D> positions = FindSurroundingSimilarElements(position2D);
@@ -84,11 +93,49 @@ namespace Assets.Scripts
 
             Debug.Log(debugString);
             CollectElements(positions);
-            FixGameboard();
+
+            if (_fixCooutine != null)
+                StopCoroutine(_fixCooutine);
+            _fixCooutine = StartCoroutine(FixGameboardAfter(_maxComboTime));
             //Destroy(go);
         }
 
         private void FixColumn(int columnIndex)
+        {
+            for (int i = 0; i < boardHeigth; i++)
+            {
+                if (gameboard[columnIndex, i] != null)
+                    continue;
+
+                int firstElement = -1;
+                for (int j=i+1; j < boardHeigth; j++)
+                {
+                    if (gameboard[columnIndex, j] != null)
+                    {
+                        firstElement = j;
+                        break;
+                    }
+                }
+
+                if (firstElement == -1)
+                    return;
+
+                gameboard[columnIndex, i] = gameboard[columnIndex, firstElement];
+                gameboard[columnIndex, firstElement] = null;
+
+
+                Element e = gameboard[columnIndex, i].GetComponent<Element>();
+                e.FallToPosition(new Vector3(
+                    e.gameObject.transform.position.x,
+                    e.gameObject.transform.position.y - (firstElement - i),
+                    e.gameObject.transform.position.z
+                    ));
+
+                e.SetPosition(new Position2D(columnIndex, i));
+            }
+        }
+
+        private void FixColumn2(int columnIndex)
         {
             int firstNull = -1;
             for (int j = 0; j < boardHeigth; j++)
@@ -119,20 +166,28 @@ namespace Assets.Scripts
                 return;
 
             int gap = firstElement - firstNull;
+            int missed = 0;
             for (int j = 0; j < gap; j++)
             {
                 if (firstElement + j >= boardHeigth)
                     return;
 
                 // animation for existing pieces
+                if (gameboard[columnIndex, firstElement + j] == null)
+                {
+                    missed++;
+                    continue;
+                }
                 Element e = gameboard[columnIndex, firstElement + j].GetComponent<Element>();
+                
+
                 e.FallToPosition(new Vector3(
                     e.gameObject.transform.position.x,
                     e.gameObject.transform.position.y - gap,
                     e.gameObject.transform.position.z
                     ));
 
-                gameboard[columnIndex, firstNull + j] = gameboard[columnIndex, firstElement + j];
+                gameboard[columnIndex, firstNull + j - missed] = gameboard[columnIndex, firstElement + j];
                 gameboard[columnIndex, firstElement + j] = null;
 
                 if (gameboard[columnIndex, firstNull + j] != null)
