@@ -15,6 +15,7 @@ namespace Assets.Scripts
         public GameObject[] elementPrefabs;
         private float _maxComboTime;
         private Coroutine _fixCooutine;
+        private bool _canClick = true;
 
         public void Init(int width, int heigth, GameObject[] prefabs, float maxComboTime)
         {
@@ -54,6 +55,7 @@ namespace Assets.Scripts
             );
 
             e.SetPosition(new Position2D(x_position, y_position));
+            e.SetFallingAnimationTime(GameController.Instance.fallingAnimationDuration);
             e.FallToPosition(targetPosition);
 
             return go;
@@ -74,6 +76,13 @@ namespace Assets.Scripts
             DebugShowGameboard();
         }
 
+        private IEnumerator DisablePressing(float time)
+        {
+            _canClick = false;
+            yield return new WaitForSeconds(time);
+            _canClick = true;
+        }
+
         private IEnumerator FixGameboardAfter(float maxComboTime)
         {
             yield return new WaitForSeconds(maxComboTime);
@@ -82,6 +91,9 @@ namespace Assets.Scripts
 
         public void ElementPressed(Position2D position2D)
         {
+            if (!_canClick)
+                return;
+
             List<Position2D> positions = FindSurroundingSimilarElements(position2D);
             Debug.Log(positions.Count);
 
@@ -181,6 +193,8 @@ namespace Assets.Scripts
 
         private void FixGameboard()
         {
+            StartCoroutine(DisablePressing(GameController.Instance.fallingAnimationDuration));
+
             for (int i = 0; i < boardWidth; i++)
             {
                 for (int j = 0; j < boardHeigth; j++)

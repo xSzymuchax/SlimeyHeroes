@@ -36,6 +36,11 @@ namespace Assets.Scripts
             GameController.Instance.ElementPressed(position2D);
         }
 
+        public void SetFallingAnimationTime(float time)
+        {
+            _fallingAnimationDuration = time;
+        }
+
         public void FallToPosition(Vector3 targetPosition)
         {
             StopAllCoroutines();
