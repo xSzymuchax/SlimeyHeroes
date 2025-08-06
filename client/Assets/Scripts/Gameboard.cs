@@ -135,67 +135,6 @@ namespace Assets.Scripts
             }
         }
 
-        private void FixColumn2(int columnIndex)
-        {
-            int firstNull = -1;
-            for (int j = 0; j < boardHeigth; j++)
-            {
-                if (gameboard[columnIndex, j] == null)
-                {
-                    firstNull = j;
-                    break;
-                }
-
-            }
-
-            if (firstNull == -1)
-                return;
-
-            int firstElement = -1;
-            for (int j = firstNull + 1; j < boardHeigth; j++)
-            {
-                if (gameboard[columnIndex, j] != null)
-                {
-                    firstElement = j;
-                    break;
-                }
-
-            }
-
-            if (firstElement == -1)
-                return;
-
-            int gap = firstElement - firstNull;
-            int missed = 0;
-            for (int j = 0; j < gap; j++)
-            {
-                if (firstElement + j >= boardHeigth)
-                    return;
-
-                // animation for existing pieces
-                if (gameboard[columnIndex, firstElement + j] == null)
-                {
-                    missed++;
-                    continue;
-                }
-                Element e = gameboard[columnIndex, firstElement + j].GetComponent<Element>();
-                
-
-                e.FallToPosition(new Vector3(
-                    e.gameObject.transform.position.x,
-                    e.gameObject.transform.position.y - gap,
-                    e.gameObject.transform.position.z
-                    ));
-
-                gameboard[columnIndex, firstNull + j - missed] = gameboard[columnIndex, firstElement + j];
-                gameboard[columnIndex, firstElement + j] = null;
-
-                if (gameboard[columnIndex, firstNull + j] != null)
-                    e.SetPosition(new Position2D(columnIndex, firstNull + j));
-
-            }
-        }
-
         private List<ColumnMissing> FindMissing()
         {
             List<ColumnMissing> missing = new List<ColumnMissing>();
