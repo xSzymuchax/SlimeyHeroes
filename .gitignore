@@ -1,3 +1,5 @@
+# Client ================================================================================================
+
 # Ignoruj Unity buildy i cache – działa dla client/
 client/[Ll]ibrary/
 client/[Tt]emp/
@@ -14,13 +16,15 @@ client/*.pidb
 client/*.unityproj
 client/.vs
 
-# Ignoruj systemowe
-.DS_Store
-Thumbs.db
+# Server ================================================================================================
 
-# Inne buildy
-*.exe
-*.apk
-*.aab
-*.zip
-*.log
+# Build artifacts
+server/ServerKlocki/ServerKlocki/bin/
+server/ServerKlocki/ServerKlocki/obj/
+server/ServerKlocki/ServerKlocki/out/
+
+# VS / VSCode settings
+server/ServerKlocki/.vscode/
+server/ServerKlocki/.vs/
+server/ServerKlocki/.idea/
+
