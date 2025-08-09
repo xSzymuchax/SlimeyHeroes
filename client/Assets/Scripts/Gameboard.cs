@@ -16,6 +16,7 @@ namespace Assets.Scripts
         private float _maxComboTime;
         private Coroutine _fixCooutine;
         private bool _canClick = true;
+        private Transform _elementsContainer;
 
         public void Init(int width, int heigth, GameObject[] prefabs, float maxComboTime)
         {
@@ -24,6 +25,7 @@ namespace Assets.Scripts
             elementPrefabs = prefabs;
             _maxComboTime = maxComboTime;
             boardCenter = GameObject.Find("BoardCenter").transform;
+            _elementsContainer = GameObject.Find("ElementsContainer").transform;
             FillGameboard();
         }
 
@@ -47,6 +49,7 @@ namespace Assets.Scripts
                 boardCenter.transform.position.z);
 
             GameObject go = Instantiate(selectedPrefab, elementPosition, Quaternion.identity);
+            go.transform.SetParent(_elementsContainer);
             Element e = go.GetComponent<Element>();
             Vector3 targetPosition = new Vector3(
                     e.gameObject.transform.position.x,

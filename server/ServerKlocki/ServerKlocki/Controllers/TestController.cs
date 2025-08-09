@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Filters;
+using Swashbuckle.AspNetCore.Annotations;
+using ServerKlocki.DTOs;
+using ServerKlocki.Examples;
+
 namespace ServerKlocki.Controllers
 {
     [ApiController]
     [Route("/test")]
     public class TestController : ControllerBase
     {
-        public class NumberDTO
-        {
-            public int Number { get; set; }
-        }
-
         [HttpGet]
         public IActionResult TestHello()
         {
@@ -29,8 +29,20 @@ namespace ServerKlocki.Controllers
         }
 
         [HttpPost]
+        [SwaggerOperation(
+            Summary = "Returns number multiplied by 2",
+            Description = "Return only if valid number, else returns error 500"
+        )]
+        [SwaggerRequestExample(typeof(NumberDTO), typeof(NumberDTOExample))]
+        [ProducesResponseType(typeof(NumberDTO), 200)]
+        [ProducesResponseType(typeof(string), 500)]
+        [SwaggerResponseExample(200, typeof(NumberDTOExample))]
+        [SwaggerResponseExample(500, typeof(Error500Example))]
         public IActionResult TestPost([FromBody] NumberDTO number)
         {
+            if (number == null)
+                return BadRequest("Incorrect number data");
+
             return Ok(number.Number * 2);
         }
     }
