@@ -32,8 +32,13 @@ namespace Assets.Scripts
 
         private GameObject GenerateElement(int x_position, int y_position, bool generateAbove = false)
         {
-            float xOffset = -boardWidth / 2;
-            float yOffset = -boardHeigth / 2;
+            float xOffset = -boardWidth / 2f;
+            float yOffset = -boardHeigth / 2f;
+
+            if (boardWidth % 2 == 0)
+                xOffset += 0.5f;
+            if (boardHeigth % 2 == 0)
+                yOffset += 0.5f;
 
             int bonusYOffset = 0;
             if (generateAbove)
