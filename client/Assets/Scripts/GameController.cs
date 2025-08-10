@@ -19,7 +19,7 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         Instance = this;
-        StartGame();
+        //StartGame();
     }
 
     public void ElementPressed(Position2D position2D)

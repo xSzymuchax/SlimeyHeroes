@@ -29,6 +29,7 @@ namespace ServerKlocki
 
             app.MapControllers();
             app.MapGet("/", () => "Hello World!");
+            app.MapPost("/", () => "Hello World! - post methodS");
 
             //app.UseHttpsRedirection();
             app.Run();
