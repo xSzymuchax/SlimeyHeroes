@@ -1,6 +1,8 @@
 using ServerKlocki.Examples;
+using ServerKlocki.Database;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServerKlocki
 {
@@ -17,6 +19,10 @@ namespace ServerKlocki
                 options.IncludeXmlComments(xmlPath);
                 options.ExampleFilters();
                 options.EnableAnnotations();
+            });
+            builder.Services.AddDbContext<DatabaseContext>(options =>
+            {
+                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
             // swagger examples
