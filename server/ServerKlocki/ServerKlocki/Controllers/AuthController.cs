@@ -27,7 +27,7 @@ namespace ServerKlocki.Controllers
         private string GenerateJWTToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.Sha256);
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
@@ -93,8 +93,9 @@ namespace ServerKlocki.Controllers
 
             // TODO - hash password
             var user = _context.Users.FirstOrDefault(
-                u => u.Email == loginData.Email && 
-                u.Email == loginData.Password
+                u => 
+                u.Email == loginData.Email && 
+                u.Password == loginData.Password
             );
 
             if (user == null)
@@ -103,6 +104,7 @@ namespace ServerKlocki.Controllers
             }
 
             string newToken = GenerateJWTToken(user);
+            Debug.WriteLine(newToken);
             TokenResponseDTO tokenResponseDTO = new TokenResponseDTO() { message = "Login Successful", token = newToken };
             return Ok(tokenResponseDTO);
         }

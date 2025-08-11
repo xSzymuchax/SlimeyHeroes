@@ -8,11 +8,11 @@
         /// <summary>
         /// Response message.
         /// </summary>
-        public string message;
+        public required string message { get; set; }
 
         /// <summary>
         /// Authorization Token.
         /// </summary>
-        public string token;
+        public required string token { get; set; }
     }
 }

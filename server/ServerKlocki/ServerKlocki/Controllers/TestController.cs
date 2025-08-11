@@ -4,6 +4,7 @@ using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Annotations;
 using ServerKlocki.DTOs;
 using ServerKlocki.Examples;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ServerKlocki.Controllers
 {
@@ -44,6 +45,13 @@ namespace ServerKlocki.Controllers
                 return BadRequest("Incorrect number data");
 
             return Ok(number.Number * 2);
+        }
+
+        [Authorize]
+        [HttpGet("secured")]
+        public IActionResult SecuredTestGet()
+        {
+            return Ok("To jest zabezpieczony endpoint!");
         }
     }
 }
