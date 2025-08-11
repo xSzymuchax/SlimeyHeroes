@@ -3,7 +3,7 @@
     /// <summary>
     /// Data object for user login.
     /// </summary>
-    public class LoginDataDTO
+    public class LoginRequestDTO
     {
         /// <summary>
         /// Email of user who is logging.

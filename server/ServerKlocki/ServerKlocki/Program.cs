@@ -3,6 +3,8 @@ using ServerKlocki.Database;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ServerKlocki
 {
@@ -12,6 +14,7 @@ namespace ServerKlocki
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddControllers();
+            
             builder.Services.AddSwaggerGen(options =>
             {
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -20,9 +23,15 @@ namespace ServerKlocki
                 options.ExampleFilters();
                 options.EnableAnnotations();
             });
+            
             builder.Services.AddDbContext<DatabaseContext>(options =>
             {
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
+            {
+
             });
 
             // swagger examples

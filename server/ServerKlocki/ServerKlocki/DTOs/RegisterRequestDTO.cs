@@ -3,7 +3,7 @@
     /// <summary>
     /// User register parameters.
     /// </summary>
-    public class RegisterDataDTO
+    public class RegisterRequestDTO
     {
         /// <summary>
         /// Name of new user.

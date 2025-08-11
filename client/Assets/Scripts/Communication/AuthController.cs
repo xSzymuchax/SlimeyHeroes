@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -9,7 +10,7 @@ using UnityEngine.UI;
 public class AuthController : MonoBehaviour
 {
     // error output
-    public TMP_InputField errorOutput;
+    public TextMeshProUGUI errorOutput;
 
     // register
     public TMP_InputField registerUsername;
@@ -17,30 +18,12 @@ public class AuthController : MonoBehaviour
     public TMP_InputField registerPassword;
     public TMP_InputField registerPassword2;
 
-    [System.Serializable]
-    public class RegisterData
-    {
-        public string Username { get; private set; }
-        public string Email { get; private set; }
-        public string Password { get; private set; }
-        public string Password2{ get; private set; }
-
-        public RegisterData(string username, string email, string password, string password2) {
-            Username = username;
-            Email = email;
-            Password = password;
-            Password2 = password2;
-
-            Debug.Log($"Username: {Username}");
-        }
-    }
-
-    public IEnumerator SendRegisterData(RegisterData registerData)
+    public IEnumerator SendRegisterData(RegisterRequest registerData)
     {
         // prepare data
         var json = JsonUtility.ToJson(registerData);
         byte[] raw = Encoding.UTF8.GetBytes(json);
-        string registerEndpoint = NetworkController.ServerAdress;
+        string registerEndpoint = NetworkController.ServerAdress + "/auth/register";
 
         Debug.Log(json);
         // request
@@ -60,6 +43,7 @@ public class AuthController : MonoBehaviour
             else
             {
                 Debug.Log($"RegisterError: {request.error}");
+                errorOutput.gameObject.SetActive(true);
                 errorOutput.text = request.error;
             }
         }
@@ -67,7 +51,7 @@ public class AuthController : MonoBehaviour
 
     public void Register()
     {
-        StartCoroutine(SendRegisterData(new RegisterData(
+        StartCoroutine(SendRegisterData(new RegisterRequest(
             registerUsername.text,
             registerEmail.text,
             registerPassword.text,
@@ -78,27 +62,43 @@ public class AuthController : MonoBehaviour
     // login
     public TMP_InputField loginEmail;
     public TMP_InputField loginPassword;
-    public class LoginData
-    {
-        public string Email { get; private set; }
-        public string Password { get; private set; }
 
-        public LoginData(string email, string password)
+    public IEnumerator SendLoginData(LoginRequest loginData)
+    {
+        // prepare data
+        var json = JsonUtility.ToJson(loginData);
+        byte[] raw = Encoding.UTF8.GetBytes(json);
+        string loginEndpoint = NetworkController.ServerAdress + "/auth/login";
+
+        using (UnityWebRequest request = new UnityWebRequest(loginEndpoint, "POST"))
         {
-            Email = email;
-            Password = password;
-        }
-    }
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.uploadHandler = new UploadHandlerRaw(raw);
+            request.downloadHandler = new DownloadHandlerBuffer();
 
-    public IEnumerator SendLoginData(LoginData loginData)
-    {
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string serverResponse = request.downloadHandler.text;
+                TokenResponse tokenResponse = JsonUtility.FromJson<TokenResponse>(serverResponse);
+
+                NetworkController.SetToken(tokenResponse.token);
+                Debug.Log($"Received authorization token: {NetworkController.TokenJWT}");
+            }
+            else
+            {
+                Debug.LogError($"Login error: {request.error}");
+            }
+        }
+
         yield return null;
     }
 
     public void Login()
     {
         Debug.Log(loginEmail.text);
-        StartCoroutine(SendLoginData(new LoginData(
+        StartCoroutine(SendLoginData(new LoginRequest(
             loginEmail.text,
             loginPassword.text
         )));
