@@ -9,11 +9,6 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public enum ElementType
-    {
-        RED=1, ORANGE=2, GREEN=3, YELLOW=4
-    }
-
     public class Element : MonoBehaviour
     {
         private int _x;

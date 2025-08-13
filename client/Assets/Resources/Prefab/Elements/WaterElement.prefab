@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 6993359774958578028}
   - component: {fileID: 2649256980708042649}
   - component: {fileID: 1110621803815109165}
-  - component: {fileID: 5107391756937378100}
+  - component: {fileID: -1508127648988410600}
   m_Layer: 0
-  m_Name: RedElement
+  m_Name: WaterElement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ff358af8707a46441854bf8d31b3e024, type: 2}
+  - {fileID: 2100000, guid: d6d80fcccb72579438002a8fd3fc6566, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -106,7 +106,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5107391756937378100
+--- !u!114 &-1508127648988410600
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,7 +115,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8171201763566394183}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae6c6eee1bd61fe4bad6e1b8dc662258, type: 3}
+  m_Script: {fileID: 11500000, guid: 56c5d63d3fe5c9c4fbd7ee89f252e76d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   elementType: 1

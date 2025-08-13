@@ -18,17 +18,21 @@ namespace Assets.Scripts
         private bool _canClick = true;
         private Transform _elementsContainer;
 
-        public void Init(int width, int heigth, GameObject[] prefabs, float maxComboTime)
+        public void Init(int width, int heigth, float maxComboTime, List<ElementType> choosenElements)
         {
             boardWidth = width;
             boardHeigth = heigth;
-            elementPrefabs = prefabs;
+            elementPrefabs = LoadChoosenElements(choosenElements);
             _maxComboTime = maxComboTime;
             boardCenter = GameObject.Find("BoardCenter").transform;
             _elementsContainer = GameObject.Find("ElementsContainer").transform;
             FillGameboard();
         }
 
+        private GameObject[] LoadChoosenElements(List<ElementType> choosenElements)
+        {
+            return ElementDataGenerator.GetElementsPrefabs(choosenElements);
+        }
 
         private GameObject GenerateElement(int x_position, int y_position, bool generateAbove = false)
         {
@@ -97,10 +101,10 @@ namespace Assets.Scripts
             FixGameboard();
         }
 
-        public void ElementPressed(Position2D position2D)
+        public CollectedElementsInformation ElementPressed(Position2D position2D)
         {
             if (!_canClick)
-                return;
+                return null;
 
             List<Position2D> positions = FindSurroundingSimilarElements(position2D);
             Debug.Log(positions.Count);
@@ -112,11 +116,13 @@ namespace Assets.Scripts
             }
 
             Debug.Log(debugString);
-            CollectElements(positions);
+            CollectedElementsInformation collectedElementsInformation = CollectElements(positions);
 
             if (_fixCooutine != null)
                 StopCoroutine(_fixCooutine);
             _fixCooutine = StartCoroutine(FixGameboardAfter(_maxComboTime));
+            
+            return collectedElementsInformation;
             //Destroy(go);
         }
 
@@ -264,17 +270,25 @@ namespace Assets.Scripts
         }
 
         // TODO - collect instead of destroy
-        private void CollectElements(List<Position2D> elementsPositions)
+        private CollectedElementsInformation CollectElements(List<Position2D> elementsPositions)
         {
             if (elementsPositions.Count < 3)
-                return;
+                return null;
+
+            Position2D firstposition = elementsPositions[0];
+            ElementType collectedType = gameboard[firstposition.X, firstposition.Y].GetComponent<Element>().elementType;
+            CollectedElementsInformation collectedElementsInformation = new CollectedElementsInformation(collectedType, 0);
 
             foreach (Position2D p2d in elementsPositions)
             {
                 GameObject go = gameboard[p2d.X, p2d.Y];
                 gameboard[p2d.X, p2d.Y] = null;
+
+                collectedElementsInformation.Increment();
                 Destroy(go);
             }
+
+            return collectedElementsInformation;
         }
 
         private void DebugShowGameboard()

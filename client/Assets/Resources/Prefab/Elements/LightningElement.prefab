@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 6993359774958578028}
   - component: {fileID: 2649256980708042649}
   - component: {fileID: 1110621803815109165}
-  - component: {fileID: 2451906776468690399}
+  - component: {fileID: -2594168280822084714}
   m_Layer: 0
-  m_Name: GreenElement
+  m_Name: LightningElement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c0f412de203d97b4ab0a043ed85c959f, type: 2}
+  - {fileID: 2100000, guid: ea59dadb69473ea4e97d72d09162657b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -106,7 +106,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2451906776468690399
+--- !u!114 &-2594168280822084714
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,7 +115,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8171201763566394183}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2b6a6973531ce74c9cf63d119091f12, type: 3}
+  m_Script: {fileID: 11500000, guid: 9f2b505141441134fbe202ce3fccc731, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  elementType: 3
+  elementType: 2
