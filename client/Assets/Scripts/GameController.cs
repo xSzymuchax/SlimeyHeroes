@@ -22,6 +22,8 @@ public class GameController : MonoBehaviour
     public BarsController barsController;
     public GameObject turnBarsUIContainer;
 
+    public ElementsTracker elementsTracker;
+
     private void Start()
     {
         Instance = this;
@@ -33,21 +35,21 @@ public class GameController : MonoBehaviour
         // tell gameboard that element was pressed
         CollectedElementsInformation cei = gameboard.ElementPressed(position2D);
 
-        // update bars
-        barsController.UpdateBar(cei);
+        // TODO - update game state information
+        elementsTracker.UpdateTracker(cei);
     }
     
     public void StartGame()
     {
-        // draw 4 element types
+        // draw 4 element types TODO - should get from server
         currentElements = ElementDataGenerator.DrawElementTypes(_defaultTypesAmount);
+
+        // TODO - create some data object to controll collected elements
+        elementsTracker = new ElementsTracker(currentElements);
 
         // create gameboard with 4 types
         gameboard = this.AddComponent<Gameboard>();
         gameboard.Init(boardWidth, boardHeigth, maxComboTime, currentElements);
-
-        // create bars corresponding to types
-        barsController.InitializeBars(currentElements);
 
         // fix camera position
         CalculateCameraSize();

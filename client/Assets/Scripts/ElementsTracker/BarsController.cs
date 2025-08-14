@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class BarsController : MonoBehaviour
 {
-    public BarsController Instance;
+    public static BarsController Instance;
     public GameObject barPrefab;
     public float defaultMaxElements = 30f;
     public List<BarController> bars;
@@ -15,29 +15,23 @@ public class BarsController : MonoBehaviour
         Instance = this;
     }
 
-    public void InitializeBars(List<ElementType> elementTypes)
+    public void InitializeBars(List<ElementsTrackerData> elementDatas)
     {
-        foreach (ElementType elementType in elementTypes)
+        foreach (var data in elementDatas)
         {
             GameObject go = Instantiate(barPrefab, transform);
             BarController barController = go.GetComponent<BarController>();
-            barController.SetMaxElements(defaultMaxElements);
-            barController.SetBarColor(ElementDataGenerator.GetColor(elementType));
-            barController.SetElementType(elementType);
+            barController.Initialize(data);
             barController.UpdateBar();
             bars.Add(barController);
         }
     }
 
-    public void UpdateBar(CollectedElementsInformation cei)
+    public void UpdateBars()
     {
         foreach (BarController barController in bars)
         {
-            if (barController.ElementType == cei.elementType)
-            {
-                barController.AddCollected(cei.amount);
-                break;
-            }
+            barController.UpdateBar();
         }
     }
 }

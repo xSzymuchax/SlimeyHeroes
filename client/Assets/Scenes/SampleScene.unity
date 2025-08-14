@@ -1513,7 +1513,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Instance: {fileID: 0}
   barPrefab: {fileID: 3558003926182246050, guid: 734a3f86dcf6e0345813323d61cf87e2, type: 3}
-  defaultMaxElements: 100
+  defaultMaxElements: 30
   bars: []
 --- !u!1 &403993452
 GameObject:
@@ -1915,7 +1915,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentElements: 
   gameboard: {fileID: 0}
-  boardWidth: 10
+  boardWidth: 20
   boardHeigth: 10
   maxComboTime: 1.5
   fallingAnimationDuration: 0.5
