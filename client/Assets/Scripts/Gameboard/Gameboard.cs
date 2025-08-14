@@ -73,6 +73,53 @@ namespace Assets.Scripts
             return go;
         }
 
+        private GameObject GenerateElement(int x_position, int y_position, ElementType elementType, bool generateAbove = false)
+        {
+            float xOffset = -boardWidth / 2f;
+            float yOffset = -boardHeigth / 2f;
+
+            if (boardWidth % 2 == 0)
+                xOffset += 0.5f;
+            if (boardHeigth % 2 == 0)
+                yOffset += 0.5f;
+
+            int bonusYOffset = 0;
+            if (generateAbove)
+                bonusYOffset = boardHeigth;
+
+            GameObject selectedPrefab = null;
+            
+            foreach (GameObject g in elementPrefabs)
+            {
+                Element el = g.GetComponent<Element>();
+                if (el.elementType == elementType)
+                {
+                    selectedPrefab = g;
+                    break;
+                }
+            }
+
+            Vector3 elementPosition = new Vector3(
+                boardCenter.transform.position.x + x_position + xOffset,
+                boardCenter.transform.position.y + y_position + yOffset + bonusYOffset,
+                boardCenter.transform.position.z);
+
+            GameObject go = Instantiate(selectedPrefab, elementPosition, Quaternion.identity);
+            go.transform.SetParent(_elementsContainer);
+            Element e = go.GetComponent<Element>();
+            Vector3 targetPosition = new Vector3(
+                    e.gameObject.transform.position.x,
+                    e.gameObject.transform.position.y - bonusYOffset,
+                    e.gameObject.transform.position.z
+            );
+
+            e.SetPosition(new Position2D(x_position, y_position));
+            e.SetFallingAnimationTime(GameController.Instance.fallingAnimationDuration);
+            e.FallToPosition(targetPosition);
+
+            return go;
+        }
+
         private void FillGameboard()
         {
             gameboard = new GameObject[boardWidth, boardHeigth];
@@ -124,6 +171,24 @@ namespace Assets.Scripts
             
             return collectedElementsInformation;
             //Destroy(go);
+        }
+
+        public void ChangeElementType(Position2D position2D, ElementType elementType)
+        {
+            if (position2D.X < 0 || position2D.X >= boardWidth)
+                return;
+
+            if (position2D.Y < 0 || position2D.Y >= boardHeigth)
+                return;
+
+            if (gameboard[position2D.X, position2D.Y] == null)
+                return;
+
+            GameObject oldElement = gameboard[position2D.X, position2D.Y];
+            GameObject newElement = GenerateElement(position2D.X, position2D.Y, elementType, false);
+
+            Effect old_effect = oldElement.GetComponent<Element>().Effect;
+            newElement.GetComponent<Element>().SetEffect(old_effect);
         }
 
         private void FixColumn(int columnIndex)
@@ -290,6 +355,7 @@ namespace Assets.Scripts
 
             return collectedElementsInformation;
         }
+
 
         private void DebugShowGameboard()
         {
