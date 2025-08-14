@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6993359774958578028}
   - component: {fileID: 2649256980708042649}
   - component: {fileID: 1110621803815109165}
-  - component: {fileID: -2594168280822084714}
+  - component: {fileID: 2007464868310123518}
   m_Layer: 0
   m_Name: LightningElement
   m_TagString: Untagged
@@ -106,7 +106,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-2594168280822084714
+--- !u!114 &2007464868310123518
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,7 +115,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8171201763566394183}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f2b505141441134fbe202ce3fccc731, type: 3}
+  m_Script: {fileID: 11500000, guid: 50d9ff972ea14e74888e7250a2ba9ae8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   elementType: 2

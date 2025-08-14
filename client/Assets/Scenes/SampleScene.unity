@@ -1511,7 +1511,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f6dea7aa34c84b41ae5bbe50b4b82b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Instance: {fileID: 0}
   barPrefab: {fileID: 3558003926182246050, guid: 734a3f86dcf6e0345813323d61cf87e2, type: 3}
   defaultMaxElements: 30
   bars: []
@@ -1915,8 +1914,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentElements: 
   gameboard: {fileID: 0}
-  boardWidth: 20
-  boardHeigth: 10
+  boardWidth: 10
+  boardHeigth: 20
   maxComboTime: 1.5
   fallingAnimationDuration: 0.5
   playerCam: {fileID: 963194227}

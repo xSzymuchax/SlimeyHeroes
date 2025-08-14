@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class YellowElement : Element
+public class LightningElement : Element
 {
 
 }
