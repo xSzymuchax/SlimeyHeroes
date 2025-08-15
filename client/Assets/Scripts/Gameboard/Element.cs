@@ -15,7 +15,7 @@ namespace Assets.Scripts
         private int _y;
         private float _fallingAnimationDuration = 0.3f;
         public ElementType elementType;
-        private Effect _effect;
+        public Effect _effect;
 
 
         public int X { get => _x; set => _x = value; }
@@ -26,11 +26,14 @@ namespace Assets.Scripts
         {
             X = position2D.X;
             Y = position2D.Y;
+
+            _effect?.SetPosition(position2D);
         }
 
         public void SetEffect(Effect effect)
         {
             Effect = effect;
+            //transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         }
 
         private void OnMouseDown()

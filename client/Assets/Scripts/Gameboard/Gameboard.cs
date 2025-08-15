@@ -27,6 +27,13 @@ namespace Assets.Scripts
             boardCenter = GameObject.Find("BoardCenter").transform;
             _elementsContainer = GameObject.Find("ElementsContainer").transform;
             FillGameboard();
+
+            SummonEffectTest();
+        }
+
+        private void SummonEffectTest()
+        {
+            gameboard[5, 5].GetComponent<Element>().SetEffect(new ColorSplashEffect(new Position2D(5, 5), 4, gameboard[5,5].GetComponent<Element>().elementType));
         }
 
         private GameObject[] LoadChoosenElements(List<ElementType> choosenElements)
@@ -95,6 +102,7 @@ namespace Assets.Scripts
                 if (el.elementType == elementType)
                 {
                     selectedPrefab = g;
+                    Debug.Log(selectedPrefab.name);
                     break;
                 }
             }
@@ -173,6 +181,13 @@ namespace Assets.Scripts
             //Destroy(go);
         }
 
+        public Element GetElementFromCell(Position2D position2D)
+        {
+            if (gameboard[position2D.X, position2D.Y] == null)
+                return null;
+            return gameboard[position2D.X, position2D.Y].GetComponent<Element>();
+        }
+
         public void ChangeElementType(Position2D position2D, ElementType elementType)
         {
             if (position2D.X < 0 || position2D.X >= boardWidth)
@@ -189,6 +204,9 @@ namespace Assets.Scripts
 
             Effect old_effect = oldElement.GetComponent<Element>().Effect;
             newElement.GetComponent<Element>().SetEffect(old_effect);
+
+            Destroy(gameboard[position2D.X, position2D.Y]);
+            gameboard[position2D.X, position2D.Y] = newElement;
         }
 
         private void FixColumn(int columnIndex)
@@ -344,18 +362,40 @@ namespace Assets.Scripts
             ElementType collectedType = gameboard[firstposition.X, firstposition.Y].GetComponent<Element>().elementType;
             CollectedElementsInformation collectedElementsInformation = new CollectedElementsInformation(collectedType, 0);
 
+            List<Element> objectsToDestroy = new List<Element>();
+
             foreach (Position2D p2d in elementsPositions)
             {
-                GameObject go = gameboard[p2d.X, p2d.Y];
-                gameboard[p2d.X, p2d.Y] = null;
-
+                Element go = gameboard[p2d.X, p2d.Y].GetComponent<Element>();
                 collectedElementsInformation.Increment();
-                Destroy(go);
+                gameboard[p2d.X, p2d.Y] = null;
+                // zamiast destroy -> zlicz klocki do listy, potem uruchom efekty i wtedy zniszcz klocki
+                objectsToDestroy.Add(go);
             }
+
+            ActivateEffectsAndDestroy(objectsToDestroy);
 
             return collectedElementsInformation;
         }
 
+        private void ActivateEffectsAndDestroy(List<Element> gameObjects)
+        {
+            //foreach (Element go in gameObjects)
+            //{
+            //    gameboard[go.X, go.Y] = null;
+            //}
+
+            foreach (Element go in gameObjects)
+            {
+                Effect effect = go.Effect;
+                if (effect != null)
+                {
+                    effect.ActivateEffect(this);
+                }
+                
+                Destroy(go.gameObject);
+            }
+        }
 
         private void DebugShowGameboard()
         {
