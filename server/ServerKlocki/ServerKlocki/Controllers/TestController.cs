@@ -44,7 +44,7 @@ namespace ServerKlocki.Controllers
             if (number == null)
                 return BadRequest("Incorrect number data");
 
-            return Ok(number.Number * 2);
+            return Ok(new NumberDTO() { Number = number.Number * 2 });
         }
 
         [Authorize]

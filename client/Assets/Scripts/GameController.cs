@@ -33,12 +33,21 @@ public class GameController : MonoBehaviour
     public void ElementPressed(Position2D position2D)
     {
         // tell gameboard that element was pressed
-        CollectedElementsInformation cei = gameboard.ElementPressed(position2D);
+        List<CollectedElementsInformation> ceis = gameboard.ElementPressed(position2D);
 
         // TODO - update game state information
-        elementsTracker.UpdateTracker(cei);
+        foreach (CollectedElementsInformation cei in ceis)
+            elementsTracker.UpdateTracker(cei);
     }
     
+    public void CollectMixedElements(List<CollectedElementsInformation> ceis)
+    {
+        foreach (var item in ceis)
+        {
+            elementsTracker.UpdateTracker(item);
+        }
+    }
+
     public void StartGame()
     {
         // draw 4 element types TODO - should get from server

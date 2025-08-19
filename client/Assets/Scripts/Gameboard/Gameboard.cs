@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -33,7 +34,10 @@ namespace Assets.Scripts
 
         private void SummonEffectTest()
         {
-            gameboard[5, 5].GetComponent<Element>().SetEffect(new ColorSplashEffect(new Position2D(5, 5), 4, gameboard[5,5].GetComponent<Element>().elementType));
+            //gameboard[5, 5].GetComponent<Element>().SetEffect(new ColorSplashEffect(new Position2D(5, 5), 4, gameboard[5,5].GetComponent<Element>().elementType));
+            //gameboard[5, 5].GetComponent<Element>().SetEffect(new ExplosionEffect(new Position2D(5,5), 5));
+            //gameboard[5, 6].GetComponent<Element>().SetEffect(new ExplosionEffect(new Position2D(5,6), 2));
+            //gameboard[5, 5].GetComponent<Element>().SetEffect(new ColorWipeEffect(new Position2D(5, 5), 3, gameboard[5, 5].GetComponent<Element>().elementType));
         }
 
         private GameObject[] LoadChoosenElements(List<ElementType> choosenElements)
@@ -156,7 +160,9 @@ namespace Assets.Scripts
             FixGameboard();
         }
 
-        public CollectedElementsInformation ElementPressed(Position2D position2D)
+
+
+        public List<CollectedElementsInformation> ElementPressed(Position2D position2D)
         {
             if (!_canClick)
                 return null;
@@ -171,7 +177,7 @@ namespace Assets.Scripts
             }
 
             Debug.Log(debugString);
-            CollectedElementsInformation collectedElementsInformation = CollectElements(positions);
+            List<CollectedElementsInformation> collectedElementsInformation = CollectElements(positions);
 
             if (_fixCooutine != null)
                 StopCoroutine(_fixCooutine);
@@ -352,30 +358,55 @@ namespace Assets.Scripts
             return position2Ds;
         }
 
-        // TODO - collect instead of destroy
-        private CollectedElementsInformation CollectElements(List<Position2D> elementsPositions)
+        private List<List<Position2D>> SplitPositionsByElementTypes(List<Position2D> positions)
         {
-            if (elementsPositions.Count < 3)
-                return null;
+            Dictionary<ElementType, List<Position2D>> dict = new();
 
-            Position2D firstposition = elementsPositions[0];
-            ElementType collectedType = gameboard[firstposition.X, firstposition.Y].GetComponent<Element>().elementType;
-            CollectedElementsInformation collectedElementsInformation = new CollectedElementsInformation(collectedType, 0);
-
-            List<Element> objectsToDestroy = new List<Element>();
-
-            foreach (Position2D p2d in elementsPositions)
+            foreach (Position2D position in positions)
             {
-                Element go = gameboard[p2d.X, p2d.Y].GetComponent<Element>();
-                collectedElementsInformation.Increment();
-                gameboard[p2d.X, p2d.Y] = null;
-                // zamiast destroy -> zlicz klocki do listy, potem uruchom efekty i wtedy zniszcz klocki
-                objectsToDestroy.Add(go);
+                ElementType type = gameboard[position.X, position.Y].GetComponent<Element>().elementType;
+
+                if (!dict.ContainsKey(type))
+                    dict[type] = new List<Position2D>();
+
+                dict[type].Add(position);
             }
 
-            ActivateEffectsAndDestroy(objectsToDestroy);
+            List<List<Position2D>> result = dict.Values.ToList();
+            return result;
+        }
 
-            return collectedElementsInformation;
+        // TODO - return list of objects of collected elements
+        public List<CollectedElementsInformation> CollectElements(List<Position2D> elementsPositions, bool hasToBeGroup = true)
+        {
+            if (hasToBeGroup)
+            {
+                if (elementsPositions.Count < 3)
+                    return null;
+            }
+
+            List<CollectedElementsInformation> result = new();
+            foreach (List<Position2D> positions in SplitPositionsByElementTypes(elementsPositions))
+            {
+                Position2D firstposition = positions[0];
+                ElementType collectedType = gameboard[firstposition.X, firstposition.Y].GetComponent<Element>().elementType;
+                CollectedElementsInformation collectedElementsInformation = new CollectedElementsInformation(collectedType, 0);
+
+                List<Element> objectsToDestroy = new List<Element>();
+                foreach (Position2D p2d in positions)
+                {
+                    Element go = gameboard[p2d.X, p2d.Y].GetComponent<Element>();
+                    collectedElementsInformation.Increment();
+                    gameboard[p2d.X, p2d.Y] = null;
+                    // zamiast destroy -> zlicz klocki do listy, potem uruchom efekty i wtedy zniszcz klocki
+                    objectsToDestroy.Add(go);
+                }
+
+                result.Add(collectedElementsInformation);
+                ActivateEffectsAndDestroy(objectsToDestroy);
+            }
+
+            return result;
         }
 
         private void ActivateEffectsAndDestroy(List<Element> gameObjects)
