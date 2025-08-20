@@ -5,6 +5,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+/// <summary>
+/// Color splash effect class.
+/// </summary>
 public class ColorSplashEffect : Effect
 {
     public int _colorSplashRange = 1;

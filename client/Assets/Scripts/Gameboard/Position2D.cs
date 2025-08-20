@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// Class for data organization. It serves as a position of element in gameboard.
+    /// </summary>
     public class Position2D
     {
         private int _x;

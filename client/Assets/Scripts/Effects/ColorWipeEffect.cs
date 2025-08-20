@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Color wiping effect class.
+/// </summary>
 public class ColorWipeEffect : Effect
 {
     public int _colorSplashRange = 1;

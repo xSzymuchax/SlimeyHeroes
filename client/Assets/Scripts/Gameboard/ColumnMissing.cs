@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// Data class. Holds information about how many elements are missing in which column.
+    /// </summary>
     public class ColumnMissing
     {
         private int _columnIndex;

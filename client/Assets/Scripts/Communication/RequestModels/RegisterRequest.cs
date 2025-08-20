@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Data model for register request.
+/// </summary>
 [System.Serializable]
 public class RegisterRequest
 {

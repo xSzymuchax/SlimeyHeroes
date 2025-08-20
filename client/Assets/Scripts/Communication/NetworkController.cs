@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Network controller. This should be the main part of communication.
+/// </summary>
 public class NetworkController : MonoBehaviour
 {
     private static string _serverAdress = "https://localhost:3000";

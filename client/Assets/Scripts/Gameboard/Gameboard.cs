@@ -7,6 +7,9 @@ using UnityEngine.UIElements;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// Class that holds entire gameboard.
+    /// </summary>
     public class Gameboard : MonoBehaviour
     {
         private GameObject[,] gameboard;
@@ -19,6 +22,16 @@ namespace Assets.Scripts
         private bool _canClick = true;
         private Transform _elementsContainer;
 
+        /// <summary>
+        /// Initializes the gameboard.
+        /// It needs 2 GameObjects with exact names: "BoardCenter" and "ElementsContainer".
+        /// "BoardCenter" is a point, around which elements will be spawned, and teh other one is just container,
+        /// so the hierarchy won't get messy.
+        /// </summary>
+        /// <param name="width">Gameboard width.</param>
+        /// <param name="heigth">Gameboard heigth.</param>
+        /// <param name="maxComboTime">Max time allowed, before elements start respawning.</param>
+        /// <param name="choosenElements">List of element types, that will be used in this gameboard.</param>
         public void Init(int width, int heigth, float maxComboTime, List<ElementType> choosenElements)
         {
             boardWidth = width;
@@ -32,19 +45,36 @@ namespace Assets.Scripts
             SummonEffectTest();
         }
 
+        /// <summary>
+        /// Debuging function used for spawning special elements.
+        /// </summary>
         private void SummonEffectTest()
         {
-            //gameboard[5, 5].GetComponent<Element>().SetEffect(new ColorSplashEffect(new Position2D(5, 5), 4, gameboard[5,5].GetComponent<Element>().elementType));
+            gameboard[5, 5].GetComponent<Element>().SetEffect(new ColorSplashEffect(new Position2D(5, 5), 3, gameboard[5,5].GetComponent<Element>().elementType));
             //gameboard[5, 5].GetComponent<Element>().SetEffect(new ExplosionEffect(new Position2D(5,5), 5));
-            //gameboard[5, 6].GetComponent<Element>().SetEffect(new ExplosionEffect(new Position2D(5,6), 2));
+            //gameboard[5, 5].GetComponent<Element>().SetEffect(new ExplosionEffect(new Position2D(5,5), 3));
             //gameboard[5, 5].GetComponent<Element>().SetEffect(new ColorWipeEffect(new Position2D(5, 5), 3, gameboard[5, 5].GetComponent<Element>().elementType));
+
+            gameboard[5, 5].gameObject.transform.localScale = new Vector3(0.9f, 0.9f, 0.9f);
         }
 
+        /// <summary>
+        /// Returns array of Gameobjects used in board.
+        /// </summary>
+        /// <param name="choosenElements">List of elements types that should be generated.</param>
+        /// <returns>array of Gameobjects</returns>
         private GameObject[] LoadChoosenElements(List<ElementType> choosenElements)
         {
             return ElementDataGenerator.GetElementsPrefabs(choosenElements);
         }
 
+        /// <summary>
+        /// Generates Gameboard elements, and instatiates them. Starts their falling animation.
+        /// </summary>
+        /// <param name="x_position">X position in gameboard</param>
+        /// <param name="y_position">Y position in gameboard</param>
+        /// <param name="generateAbove">tells if element should be spawned above gameboard or in place</param>
+        /// <returns>returns GameObject of generated element</returns>
         private GameObject GenerateElement(int x_position, int y_position, bool generateAbove = false)
         {
             float xOffset = -boardWidth / 2f;
@@ -84,6 +114,15 @@ namespace Assets.Scripts
             return go;
         }
 
+        /// <summary>
+        /// Generates Gameboard elements, and instatiates them. Starts their falling animation.
+        /// Allows to set the exact type of element that should be spawned.
+        /// </summary>
+        /// <param name="x_position">X position in gameboard</param>
+        /// <param name="y_position">Y position in gameboard</param>
+        /// <param name="elementType">type of element</param>
+        /// <param name="generateAbove">tells if element should be spawned above gameboard or in place</param>
+        /// <returns>returns GameObject of generated element</returns>
         private GameObject GenerateElement(int x_position, int y_position, ElementType elementType, bool generateAbove = false)
         {
             float xOffset = -boardWidth / 2f;
@@ -132,6 +171,9 @@ namespace Assets.Scripts
             return go;
         }
 
+        /// <summary>
+        /// Fills the entire Gameboard. Uses GenerateElement methods.
+        /// </summary>
         private void FillGameboard()
         {
             gameboard = new GameObject[boardWidth, boardHeigth];
@@ -147,6 +189,11 @@ namespace Assets.Scripts
             DebugShowGameboard();
         }
 
+        /// <summary>
+        /// Disables player's ability to collect elements.
+        /// </summary>
+        /// <param name="time">Duriation of clicking block</param>
+        /// <returns>Enumerator for coroutine execution.</returns>
         private IEnumerator DisablePressing(float time)
         {
             _canClick = false;
@@ -154,6 +201,11 @@ namespace Assets.Scripts
             _canClick = true;
         }
 
+        /// <summary>
+        /// Starts refilling gameboard.
+        /// </summary>
+        /// <param name="maxComboTime">Time before method starts refilling.</param>
+        /// <returns>Enumerator for coroutine execution.</returns>
         private IEnumerator FixGameboardAfter(float maxComboTime)
         {
             yield return new WaitForSeconds(maxComboTime);
@@ -161,7 +213,13 @@ namespace Assets.Scripts
         }
 
 
-
+        /// <summary>
+        /// Main entrance point for collecting elements.
+        /// Seeks for gruops of elements, and collects them.
+        /// At the end, tries to refill gameboard.
+        /// </summary>
+        /// <param name="position2D">Position of pressed element.</param>
+        /// <returns>List of objects, informing about amount and types of collected elements.</returns>
         public List<CollectedElementsInformation> ElementPressed(Position2D position2D)
         {
             if (!_canClick)
@@ -187,6 +245,11 @@ namespace Assets.Scripts
             //Destroy(go);
         }
 
+        /// <summary>
+        /// Returns gameboard's element.
+        /// </summary>
+        /// <param name="position2D">Position of element</param>
+        /// <returns>Element component of gameobject or null.</returns>
         public Element GetElementFromCell(Position2D position2D)
         {
             if (gameboard[position2D.X, position2D.Y] == null)
@@ -194,6 +257,11 @@ namespace Assets.Scripts
             return gameboard[position2D.X, position2D.Y].GetComponent<Element>();
         }
 
+        /// <summary>
+        /// Regenerates element of gameboard to change it's type.
+        /// </summary>
+        /// <param name="position2D">Position of element</param>
+        /// <param name="elementType">New type that should be generated</param>
         public void ChangeElementType(Position2D position2D, ElementType elementType)
         {
             if (position2D.X < 0 || position2D.X >= boardWidth)
@@ -215,6 +283,10 @@ namespace Assets.Scripts
             gameboard[position2D.X, position2D.Y] = newElement;
         }
 
+        /// <summary>
+        /// If there are empty spaces in column, it moves elements from above to close the gaps.
+        /// </summary>
+        /// <param name="columnIndex">Index of fixed column.</param>
         private void FixColumn(int columnIndex)
         {
             for (int i = 0; i < boardHeigth; i++)
@@ -250,6 +322,10 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Finds how many elements are missing in which columns.
+        /// </summary>
+        /// <returns>List of inforations, which column has how many gaps.</returns>
         private List<ColumnMissing> FindMissing()
         {
             List<ColumnMissing> missing = new List<ColumnMissing>();
@@ -279,6 +355,10 @@ namespace Assets.Scripts
             return missing;
         }
 
+        /// <summary>
+        /// Refills gameboard with new elements. It starts generating in first possible space.
+        /// </summary>
+        /// <param name="missings">List of inforations, which column has how many gaps.</param>
         private void GenerateMissing(List<ColumnMissing> missings)
         {
             foreach (ColumnMissing cm in missings)
@@ -294,6 +374,9 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Gameboard fixing entry point. It coordinates every part of refilling.
+        /// </summary>
         private void FixGameboard()
         {
             StartCoroutine(DisablePressing(GameController.Instance.fallingAnimationDuration));
@@ -313,6 +396,14 @@ namespace Assets.Scripts
             DebugShowGameboard();
         }
 
+        /// <summary>
+        /// Helper for recursive scanning.
+        /// </summary>
+        /// <param name="positions">List of found similar elements</param>
+        /// <param name="fieldChecked">Array used for checking if field was visited.</param>
+        /// <param name="x">x position of gameboard</param>
+        /// <param name="y">y position of gameboard</param>
+        /// <param name="type">Looks for this type of element</param>
         private void RecursiveGroupFinder(List<Position2D> positions, bool[,] fieldChecked, int x, int y, ElementType type)
         {
             if (x < 0 || x >= boardWidth)
@@ -341,6 +432,11 @@ namespace Assets.Scripts
 
         }
 
+        /// <summary>
+        /// Finds groups of similar elements in gameboard.
+        /// </summary>
+        /// <param name="position2D">Starting position of scanning.</param>
+        /// <returns>List with positions of similar elements.</returns>
         private List<Position2D> FindSurroundingSimilarElements(Position2D position2D)
         {
             int x = position2D.X;
@@ -358,6 +454,11 @@ namespace Assets.Scripts
             return position2Ds;
         }
 
+        /// <summary>
+        /// Groups list of element positions of difrent types into diffrent lists.
+        /// </summary>
+        /// <param name="positions">Positions of elements</param>
+        /// <returns>List of lists of same type.</returns>
         private List<List<Position2D>> SplitPositionsByElementTypes(List<Position2D> positions)
         {
             Dictionary<ElementType, List<Position2D>> dict = new();
@@ -376,7 +477,12 @@ namespace Assets.Scripts
             return result;
         }
 
-        // TODO - return list of objects of collected elements
+        /// <summary>
+        /// Collects elements. 
+        /// </summary>
+        /// <param name="elementsPositions">positions of elements that have to be collected</param>
+        /// <param name="hasToBeGroup">information, if can collect single elements, not groupped with others.</param>
+        /// <returns>how many of which elements have been collected</returns>
         public List<CollectedElementsInformation> CollectElements(List<Position2D> elementsPositions, bool hasToBeGroup = true)
         {
             if (hasToBeGroup)
@@ -409,6 +515,10 @@ namespace Assets.Scripts
             return result;
         }
 
+        /// <summary>
+        /// If elements have some effects, this method activates them, and after that, removes them from gameboard.
+        /// </summary>
+        /// <param name="gameObjects">elements that should be checked for effects and destroyed</param>
         private void ActivateEffectsAndDestroy(List<Element> gameObjects)
         {
             //foreach (Element go in gameObjects)
@@ -428,6 +538,9 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Debug method, prints whole gameboard in console.
+        /// </summary>
         private void DebugShowGameboard()
         {
             string debugString = "";

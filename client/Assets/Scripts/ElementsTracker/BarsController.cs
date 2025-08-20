@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Groups Bars.
+/// </summary>
 public class BarsController : MonoBehaviour
 {
     public static BarsController Instance;
@@ -15,6 +18,10 @@ public class BarsController : MonoBehaviour
         Instance = this;
     }
 
+    /// <summary>
+    /// Initializes the TurnBars system. 
+    /// </summary>
+    /// <param name="elementDatas">Data of each element that will be used to display bars</param>
     public void InitializeBars(List<ElementsTrackerData> elementDatas)
     {
         foreach (var data in elementDatas)
@@ -27,6 +34,9 @@ public class BarsController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates bars if the data changed.
+    /// </summary>
     public void UpdateBars()
     {
         foreach (BarController barController in bars)

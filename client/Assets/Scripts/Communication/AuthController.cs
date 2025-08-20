@@ -7,6 +7,10 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
+/// <summary>
+/// Authorization controller. Used for Register and Login of the users.
+/// Class uses corresponding UI text elements, that should be assigned in editor.
+/// </summary>
 public class AuthController : MonoBehaviour
 {
     // error output
@@ -18,6 +22,11 @@ public class AuthController : MonoBehaviour
     public TMP_InputField registerPassword;
     public TMP_InputField registerPassword2;
 
+    /// <summary>
+    /// Sends Register Request to the server.
+    /// </summary>
+    /// <param name="registerData">new user data</param>
+    /// <returns></returns>
     public IEnumerator SendRegisterData(RegisterRequest registerData)
     {
         // prepare data
@@ -49,6 +58,9 @@ public class AuthController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Call of Register.
+    /// </summary>
     public void Register()
     {
         StartCoroutine(SendRegisterData(new RegisterRequest(
@@ -63,6 +75,11 @@ public class AuthController : MonoBehaviour
     public TMP_InputField loginEmail;
     public TMP_InputField loginPassword;
 
+    /// <summary>
+    /// Sends Login Request to teh server. If login is successful, it saves acquired token.
+    /// </summary>
+    /// <param name="loginData">data sent to server.</param>
+    /// <returns></returns>
     public IEnumerator SendLoginData(LoginRequest loginData)
     {
         // prepare data
@@ -95,6 +112,9 @@ public class AuthController : MonoBehaviour
         yield return null;
     }
 
+    /// <summary>
+    /// Login Request call.
+    /// </summary>
     public void Login()
     {
         Debug.Log(loginEmail.text);

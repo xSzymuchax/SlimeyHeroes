@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Explosion effect class.
+/// </summary>
 public class ExplosionEffect : Effect
 {
     private int _explosionRange = 1;
@@ -41,7 +44,6 @@ public class ExplosionEffect : Effect
             }
         }
 
-        // TODO - 
         List<CollectedElementsInformation> collectedElementsInformationLists = gameboard.CollectElements(elementsToCollect, false);
         GameController.Instance.CollectMixedElements(collectedElementsInformationLists);
     }

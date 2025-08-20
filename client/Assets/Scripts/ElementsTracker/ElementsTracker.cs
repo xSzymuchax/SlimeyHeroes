@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// Class used for tracking the progress of collecting elmenets.
+    /// </summary>
     public class ElementsTracker
     {
         private List<ElementsTrackerData> _collectedElementsDatas;
@@ -22,6 +25,10 @@ namespace Assets.Scripts
             _barsController.InitializeBars(_collectedElementsDatas);
         }
 
+        /// <summary>
+        /// Finds and increments data object, containing information about collected amount of certain type of element.
+        /// </summary>
+        /// <param name="cei">Collected elements</param>
         public void IncrementCollectedData(CollectedElementsInformation cei)
         {
             foreach (var etd in _collectedElementsDatas)
@@ -31,6 +38,10 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Updates tracker, and corresponding turn bars.
+        /// </summary>
+        /// <param name="cei"></param>
         public void UpdateTracker(CollectedElementsInformation cei)
         {
             if (cei == null)

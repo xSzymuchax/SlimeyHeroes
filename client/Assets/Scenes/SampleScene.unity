@@ -1914,8 +1914,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentElements: 
   gameboard: {fileID: 0}
-  boardWidth: 10
-  boardHeigth: 20
+  boardWidth: 15
+  boardHeigth: 15
   maxComboTime: 1.5
   fallingAnimationDuration: 0.5
   playerCam: {fileID: 963194227}

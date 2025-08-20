@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// Data class for containing tracking informations.
+    /// It's used to track elements and it's passed to corresponding turnbar.
+    /// </summary>
     public class ElementsTrackerData
     {
         public ElementType ElementType { get; set; }
@@ -21,6 +25,11 @@ namespace Assets.Scripts
             AllCollected = 0f;
         }
 
+        /// <summary>
+        /// TODO - return information about move
+        /// Increments amount of elmenets. If more than limit, return information about granded player's move. 
+        /// </summary>
+        /// <param name="amount"></param>
         public void Collect(float amount)
         {
             CurrentElements += amount;

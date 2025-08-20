@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Data model for login request.
+/// </summary>
 [System.Serializable]
 public class LoginRequest
 {
