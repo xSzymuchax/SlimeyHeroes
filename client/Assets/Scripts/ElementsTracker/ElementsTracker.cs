@@ -29,26 +29,38 @@ namespace Assets.Scripts
         /// Finds and increments data object, containing information about collected amount of certain type of element.
         /// </summary>
         /// <param name="cei">Collected elements</param>
-        public void IncrementCollectedData(CollectedElementsInformation cei)
+        /// <returns>information, if a character is granted a move</returns>
+        public bool IncrementCollectedData(CollectedElementsInformation cei)
         {
             foreach (var etd in _collectedElementsDatas)
             {
                 if (etd.ElementType == cei.elementType)
+                {
                     etd.Collect(cei.amount);
+                    if (etd.CurrentElements >= etd.MaxElements)
+                    {
+                        etd.CurrentElements -= etd.MaxElements;
+                        return true;
+                    }
+                        
+                }        
             }
+            return false;
         }
 
         /// <summary>
         /// Updates tracker, and corresponding turn bars.
         /// </summary>
         /// <param name="cei"></param>
-        public void UpdateTracker(CollectedElementsInformation cei)
+        public bool UpdateTracker(CollectedElementsInformation cei)
         {
             if (cei == null)
-                return;
+                return false;
 
-            IncrementCollectedData(cei);
+            bool result = IncrementCollectedData(cei);
             _barsController.UpdateBars();
+
+            return result;
         }
     }
 }

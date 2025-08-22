@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEditor.Progress;
 
 /// <summary>
 /// Main controlling game class. It connects everything that is used in game.
@@ -26,10 +27,15 @@ public class GameController : MonoBehaviour
     // main cam
     public Camera playerCam;
 
-    // progress tracking
+    // figthing 
     public BarsController barsController;
     public GameObject turnBarsUIContainer;
     public ElementsTracker elementsTracker;
+
+    public FightingController fightingController;
+    public GameObject characterPrefab;
+    public Transform myTeamSpawn;
+    public Transform enemyTeamSpawn;
 
     private void Start()
     {
@@ -47,9 +53,16 @@ public class GameController : MonoBehaviour
         // tell gameboard that element was pressed
         List<CollectedElementsInformation> ceis = gameboard.ElementPressed(position2D);
 
+        if (ceis == null)
+            return;
+
         // update game state
         foreach (CollectedElementsInformation cei in ceis)
-            elementsTracker.UpdateTracker(cei);
+        {
+            bool grantedMove = elementsTracker.UpdateTracker(cei);
+            if (grantedMove)
+                fightingController.PerformAction(cei.elementType);
+        }   
     }
     
     /// <summary>
@@ -60,7 +73,9 @@ public class GameController : MonoBehaviour
     {
         foreach (var item in ceis)
         {
-            elementsTracker.UpdateTracker(item);
+            bool grantedMove = elementsTracker.UpdateTracker(item);
+            if (grantedMove)
+                fightingController.PerformAction(item.elementType);
         }
     }
 
@@ -78,6 +93,11 @@ public class GameController : MonoBehaviour
         // create gameboard with 4 types
         gameboard = this.AddComponent<Gameboard>();
         gameboard.Init(boardWidth, boardHeigth, maxComboTime, currentElements);
+
+        // initialize teams - TODO - should be loaded from server data
+        fightingController = gameObject.AddComponent<FightingController>();
+        List<GameObject> team = new List<GameObject>() { characterPrefab };
+        fightingController.Initialize(team, team, myTeamSpawn, enemyTeamSpawn);
 
         // fix camera position
         CalculateCameraSize();
