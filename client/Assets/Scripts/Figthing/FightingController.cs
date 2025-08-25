@@ -54,14 +54,20 @@ public class FightingController : MonoBehaviour
 
     private void SpawnPrefabs(List<GameObject> myTeam, List<GameObject> enemyTeam)
     {
+        int i = 0;
+        int j = 0;
         foreach (var item in myTeam)
         {
-            Instantiate(item.gameObject, _myTeamSpawn);
+            GameObject go = Instantiate(item.gameObject, _myTeamSpawn);
+            go.transform.position = new Vector3(go.transform.position.x + i*2, go.transform.position.y, go.transform.position.z);
+            i++;
         }
 
         foreach (var item in enemyTeam)
         {
-            Instantiate(item.gameObject, _enemyTeamSpawn);
+            GameObject go = Instantiate(item.gameObject, _enemyTeamSpawn);
+            go.transform.position = new Vector3(go.transform.position.x + j*2, go.transform.position.y, go.transform.position.z);
+            j++;
         }
     }
 
@@ -94,8 +100,7 @@ public class FightingController : MonoBehaviour
     private void CharacterPerformsAttack(Character attacker)
     {
         List<Character> attackedTeam = FindAttackedTeam(attacker);
-        Character target = attackedTeam[0];
-        attacker.Attack(target);
+        attacker.Attack(attackedTeam);
 
         //ApplyEffectsOverTime();
         //RemoveDeadCharacters();

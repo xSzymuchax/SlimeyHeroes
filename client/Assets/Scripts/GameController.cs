@@ -37,6 +37,12 @@ public class GameController : MonoBehaviour
     public Transform myTeamSpawn;
     public Transform enemyTeamSpawn;
 
+    // debug prefabs
+    public GameObject firecharacterPrefab;
+    public GameObject watercharacterPrefab;
+    public GameObject naturecharacterPrefab;
+    public GameObject ligthningcharacterPrefab;
+
     private void Start()
     {
         Instance = this;
@@ -96,7 +102,8 @@ public class GameController : MonoBehaviour
 
         // initialize teams - TODO - should be loaded from server data
         fightingController = gameObject.AddComponent<FightingController>();
-        List<GameObject> team = new List<GameObject>() { characterPrefab };
+        //List<GameObject> team = new List<GameObject>() { characterPrefab };
+        List<GameObject> team = new List<GameObject>() { firecharacterPrefab, watercharacterPrefab, ligthningcharacterPrefab, naturecharacterPrefab };
         fightingController.Initialize(team, team, myTeamSpawn, enemyTeamSpawn);
 
         // fix camera position
