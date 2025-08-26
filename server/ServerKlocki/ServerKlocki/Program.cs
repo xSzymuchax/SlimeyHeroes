@@ -53,6 +53,13 @@ namespace ServerKlocki
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+                db.Database.EnsureCreated();
+                DatabaseSeeder.Seed(db);
+            }
+
             app.UseSwagger();
             app.UseSwaggerUI();
             app.UseAuthentication();
