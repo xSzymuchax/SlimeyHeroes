@@ -1,0 +1,38 @@
+This code can be read by:
+	https://dbdiagram.io/d
+
+
+
+Table element_type {
+  id integer [pk, increment]
+  type varchar 
+}
+
+Table rarities {
+  id integer [pk, increment]
+  name varchar
+}
+
+Table users {
+  id          integer [pk, increment]
+  email       integer [unique]
+  username    integer [unique]
+  password    varchar [not null]
+}
+
+Table characters {
+  id integer [pk, increment]
+  name varchar
+  description varchar
+  rarity integer [ref: > rarities.id ]
+  element_type integer [ref: > element_type.id ]
+}
+
+Table user_own_characters {
+  id integer [pk, increment]
+  user_id integer [not null, ref: <> users.id ]
+  character_id integer [not null, ref: <> characters.id ]
+  souls_amount integer [not null, default: 0]
+  character_level integer [not null, default: 1]
+}
+
