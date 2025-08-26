@@ -9,5 +9,10 @@ namespace ServerKlocki.Database
 
         // add models to database
         public DbSet<User> Users { get; set; }
+        public DbSet<Character> Characters { get; set; }
+        public DbSet<Rarity> Rarities { get; set; }
+        public DbSet<UserOwnCharacters> UserOwnCharacters { get; set; }
+        public DbSet<ElementType> ElementTypes { get; set; }
+
     }
 }
