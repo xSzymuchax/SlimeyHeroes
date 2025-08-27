@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using ServerKlocki.Hubs;
 
 namespace ServerKlocki
 {
@@ -51,6 +52,8 @@ namespace ServerKlocki
             // swagger examples
             builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
 
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -68,6 +71,8 @@ namespace ServerKlocki
             app.MapControllers();
             app.MapGet("/", () => "Hello World!");
             app.MapPost("/", () => "Hello World! - post methodS");
+
+            app.MapHub<MatchmakingHub>("/matchmaker");
 
             //app.UseHttpsRedirection();
             app.Run();

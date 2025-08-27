@@ -46,7 +46,7 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         Instance = this;
-        StartGame();
+        //StartGame();
     }
 
     /// <summary>
