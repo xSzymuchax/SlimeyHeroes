@@ -37,5 +37,19 @@ namespace ServerKlocki.Hubs
                 await Clients.Client(player2).SendAsync("MatchFound", matchId, player1);
             }
         }
+
+        public async Task CancelMatchmaking()
+        {
+            string connectionId = Context.ConnectionId;
+
+            lock (_lock)
+            {
+                waitingPlayers = new Queue<string>(
+                    waitingPlayers.Where(id => id != connectionId));
+            }
+
+            // potwierdzenie
+            await Clients.Caller.SendAsync("MatchmakingCancelled");
+        }
     }
 }

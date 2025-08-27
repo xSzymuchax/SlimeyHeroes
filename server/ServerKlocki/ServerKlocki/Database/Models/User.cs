@@ -19,5 +19,8 @@ namespace ServerKlocki.Database.Models
 
         [Required]
         public string Password { get; set; } = String.Empty;
+
+        [Required]
+        public int Trophies { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace ServerKlocki.Database
             if (!context.Users.Any())
             {
                 context.AddRange(
-                    new User { Email = "mucha@example.org", Password = "mucha", Username = "mucha" }
+                    new User { Email = "mucha@example.org", Password = "mucha", Username = "mucha", Trophies = 69 }
                 );
             }
 
