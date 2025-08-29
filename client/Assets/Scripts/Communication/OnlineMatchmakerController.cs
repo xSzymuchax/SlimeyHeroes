@@ -18,7 +18,10 @@ public class OnlineMatchmakerController : MonoBehaviour
     public async void ConnectToMatchmakerService()
     {
         connection = new HubConnectionBuilder()
-            .WithUrl(NetworkController.ServerAdress + "/matchmaker")
+            .WithUrl(NetworkController.ServerAdress + "/matchmaker", options =>
+            {
+                options.AccessTokenProvider = () => Task.FromResult(NetworkController.TokenJWT);
+            })
             .WithAutomaticReconnect()
             .Build();
 
@@ -77,7 +80,10 @@ public class OnlineMatchmakerController : MonoBehaviour
     public async Task ConnectToLobby(string matchId)
     {
         connection = new HubConnectionBuilder()
-            .WithUrl(NetworkController.ServerAdress + $"/lobby/?matchId={matchId}")
+            .WithUrl(NetworkController.ServerAdress + $"/lobby/?matchId={matchId}", options =>
+            {
+                options.AccessTokenProvider = () => Task.FromResult(NetworkController.TokenJWT);
+            })
             .WithAutomaticReconnect()
             .Build();
 

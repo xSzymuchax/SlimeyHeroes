@@ -8,6 +8,14 @@ namespace ServerKlocki.Hubs
     {
         public static Dictionary<string, LobbyState> lobbies = new();
 
+        public override async Task OnConnectedAsync()
+        {
+            var playerId = Context.UserIdentifier;
+            Console.WriteLine($"Player: {playerId} connected");
+
+            await base.OnConnectedAsync();
+        }
+
         public async Task JoinLobby(string matchId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, matchId);

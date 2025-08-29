@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using ServerKlocki.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using ServerKlocki.Providers;
 
 namespace ServerKlocki
 {
@@ -45,7 +47,27 @@ namespace ServerKlocki
                         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
                     )
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && 
+                            path.StartsWithSegments("/lobby") ||
+                            path.StartsWithSegments("/mathmaker"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
+
+            builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
             builder.Services.AddAuthorization();
 
@@ -72,8 +94,8 @@ namespace ServerKlocki
             app.MapGet("/", () => "Hello World!");
             app.MapPost("/", () => "Hello World! - post methodS");
 
-            app.MapHub<MatchmakingHub>("/matchmaker");
-            app.MapHub<LobbyHub>("/lobby");
+            app.MapHub<MatchmakingHub>("/matchmaker").RequireAuthorization();
+            app.MapHub<LobbyHub>("/lobby").RequireAuthorization();
 
             //app.UseHttpsRedirection();
             app.Run();

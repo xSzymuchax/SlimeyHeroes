@@ -7,6 +7,14 @@ namespace ServerKlocki.Hubs
         private static Queue<string> waitingPlayers = new Queue<string>();
         private static readonly object _lock = new object();
 
+        public override async Task OnConnectedAsync()
+        {
+            var playerId = Context.UserIdentifier;
+            Console.WriteLine($"Player: {playerId} connected");
+
+            await base.OnConnectedAsync();
+        }
+
         /// <summary>
         /// Matchmaking method, it pairs players in 2, then 
         /// it creates match between them.
