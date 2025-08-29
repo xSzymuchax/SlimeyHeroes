@@ -41,8 +41,8 @@ namespace ServerKlocki.Hubs
             if (player1 != null && player2 != null)
             {
                 string matchId = Guid.NewGuid().ToString();
-                await Clients.Client(player1).SendAsync("MatchFound", matchId, player2);
-                await Clients.Client(player2).SendAsync("MatchFound", matchId, player1);
+                await Clients.Client(player1).SendAsync("MatchFound", matchId);
+                await Clients.Client(player2).SendAsync("MatchFound", matchId);
             }
         }
 
