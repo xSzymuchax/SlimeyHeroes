@@ -1,6 +1,7 @@
 using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -41,6 +42,9 @@ public class GameController : MonoBehaviour
     public GameObject watercharacterPrefab;
     public GameObject naturecharacterPrefab;
     public GameObject ligthningcharacterPrefab;
+
+    public GameObject lobbyScreen;
+    public TextMeshProUGUI lobbyScreenText;
 
     private void Start()
     {
@@ -119,5 +123,11 @@ public class GameController : MonoBehaviour
             max = boardHeigth;
 
         playerCam.orthographicSize = max;
+    }
+
+    public void ShowLobbyScreen(List<int> elementIDs)
+    {
+        lobbyScreen.SetActive(true);
+        lobbyScreenText.text = elementIDs.ToArray().ToString();
     }
 }

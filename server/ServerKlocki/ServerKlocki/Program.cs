@@ -73,6 +73,7 @@ namespace ServerKlocki
             app.MapPost("/", () => "Hello World! - post methodS");
 
             app.MapHub<MatchmakingHub>("/matchmaker");
+            app.MapHub<LobbyHub>("/lobby");
 
             //app.UseHttpsRedirection();
             app.Run();
