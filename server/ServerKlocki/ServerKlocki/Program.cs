@@ -57,7 +57,7 @@ namespace ServerKlocki
                         var path = context.HttpContext.Request.Path;
                         if (!string.IsNullOrEmpty(accessToken) && 
                             path.StartsWithSegments("/lobby") ||
-                            path.StartsWithSegments("/mathmaker"))
+                            path.StartsWithSegments("/matchmaker"))
                         {
                             context.Token = accessToken;
                         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using ServerKlocki.GameStates;
+using System.Diagnostics;
 
 namespace ServerKlocki.Hubs
 {
@@ -27,6 +28,8 @@ namespace ServerKlocki.Hubs
         {
             // add connection to broadcast group
             await Groups.AddToGroupAsync(Context.ConnectionId, matchId);
+
+            await Task.Delay(50);
 
             // create lobby
             LobbyState lobby;
@@ -60,6 +63,7 @@ namespace ServerKlocki.Hubs
                 _ = StartCancelCooldown(matchId, 35);
 
                 // send start countdown event to clients
+                Debug.WriteLine("sending startcountdown");
                 await Clients.Group(matchId).SendAsync("StartCountdown", 30);
             }
         }

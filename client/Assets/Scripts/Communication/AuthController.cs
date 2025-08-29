@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -79,7 +80,7 @@ public class AuthController : MonoBehaviour
     /// </summary>
     /// <param name="loginData">data sent to server.</param>
     /// <returns></returns>
-    public IEnumerator SendLoginData(LoginRequest loginData)
+    public IEnumerator SendLoginData(LoginRequest loginData, Action onSuccess)
     {
         // prepare data
         var json = JsonUtility.ToJson(loginData);
@@ -101,6 +102,8 @@ public class AuthController : MonoBehaviour
 
                 NetworkController.SetToken(tokenResponse.token);
                 Debug.Log($"Received authorization token: {NetworkController.TokenJWT}");
+
+                onSuccess?.Invoke();
             }
             else
             {
@@ -117,9 +120,15 @@ public class AuthController : MonoBehaviour
     public void Login()
     {
         Debug.Log(loginEmail.text);
-        StartCoroutine(SendLoginData(new LoginRequest(
-            loginEmail.text,
-            loginPassword.text
-        )));
+        StartCoroutine(SendLoginData(
+            new LoginRequest(loginEmail.text, loginPassword.text),
+            onSuccess: () =>
+            {
+                MenuController.Instance.ShowMainMenuAfterLogin();
+            }
+        ));
+
+        // wykonaj dopiero po zalogowaniu
+        // blablabla
     }
 }

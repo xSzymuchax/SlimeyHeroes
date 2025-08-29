@@ -1,3 +1,4 @@
+using Assets.Scripts.Communication;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections;
@@ -5,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 
 
 /// <summary>
@@ -13,11 +15,13 @@ using UnityEngine;
 /// </summary>
 public class OnlineMatchmakerController : MonoBehaviour
 {
-    private HubConnection connection;
+    private HubConnection matchmakingConnection;
+    private HubConnection lobbyConnection;
+
     public TextMeshProUGUI text;
     public async void ConnectToMatchmakerService()
     {
-        connection = new HubConnectionBuilder()
+        matchmakingConnection = new HubConnectionBuilder()
             .WithUrl(NetworkController.ServerAdress + "/matchmaker", options =>
             {
                 options.AccessTokenProvider = () => Task.FromResult(NetworkController.TokenJWT);
@@ -25,27 +29,28 @@ public class OnlineMatchmakerController : MonoBehaviour
             .WithAutomaticReconnect()
             .Build();
 
-        connection.On<string, string>("MatchFound", async (matchId, opponentId) => {
-            Debug.Log($"Match found! -> matchID: {matchId}, opponent: {opponentId}");
-            text.text += $"Match found! -> matchID: {matchId}, opponent: {opponentId}";
+        // TODO - to sie chyba przewraca
+        matchmakingConnection.On<string>("MatchFound", async (matchId) => {
+            Debug.Log($"Match found! -> matchID: {matchId}");
+            text.text += $"Match found! -> matchID: {matchId}";
 
-            await connection.StopAsync();
+            _ = ConnectToLobby(matchId);
 
-            await ConnectToLobby(matchId);
+            //await matchmakingConnection.StopAsync();
         });
 
-        connection.On("MatchmakingCancelled", () => {
+        matchmakingConnection.On("MatchmakingCancelled", () => {
             Debug.Log($"Matchmaking cancelled");
         });
 
 
         try
         {
-            await connection.StartAsync();
+            await matchmakingConnection.StartAsync();
             Debug.Log("Connected to server");
             text.text += "Connected to server";
 
-            await connection.InvokeAsync("FindMatch");
+            await matchmakingConnection.InvokeAsync("FindMatch");
         }
         catch (Exception ex)
         {
@@ -56,7 +61,7 @@ public class OnlineMatchmakerController : MonoBehaviour
 
     public async void CancellMatchmaking()
     {
-        if (connection == null)
+        if (matchmakingConnection == null)
         {
             Debug.Log("Already disconnected.");
             return;
@@ -64,10 +69,10 @@ public class OnlineMatchmakerController : MonoBehaviour
 
         try
         {
-            await connection.InvokeAsync("CancelMatchmaking");
-            await connection.StopAsync();
-            await connection.DisposeAsync();
-            connection = null;
+            await matchmakingConnection.InvokeAsync("CancelMatchmaking");
+            await matchmakingConnection.StopAsync();
+            await matchmakingConnection.DisposeAsync();
+            matchmakingConnection = null;
 
         }
         catch (Exception ex)
@@ -79,7 +84,8 @@ public class OnlineMatchmakerController : MonoBehaviour
 
     public async Task ConnectToLobby(string matchId)
     {
-        connection = new HubConnectionBuilder()
+        Debug.Log("konektuje do lobbi");
+        lobbyConnection = new HubConnectionBuilder()
             .WithUrl(NetworkController.ServerAdress + $"/lobby/?matchId={matchId}", options =>
             {
                 options.AccessTokenProvider = () => Task.FromResult(NetworkController.TokenJWT);
@@ -89,22 +95,54 @@ public class OnlineMatchmakerController : MonoBehaviour
 
         List<int> elementsdIDs = new List<int>();
 
-        connection.On<List<int>>("DrawnElements", (elements) => {
+        lobbyConnection.On<List<int>>("DrawnElements", (elements) => {
             elementsdIDs = elements;
+            GameController.Instance.ShowLobbyScreen(elements);
         });
+
+
+
+        // StartCountdown, seconds
+        // TODO - counter
+        lobbyConnection.On<int>("StartCountdown", (seconds) => {
+            Console.WriteLine("received: StartCountdown");
+            GameController.Instance.ShowLobbyScreen(elementsdIDs);
+            LoadMyCharacters();
+        });
+
+        // GameStart
 
         try
         {
-            await connection.StartAsync();
-            await connection.InvokeAsync("JoinLobby", matchId);
+            await lobbyConnection.StartAsync();
+            Debug.Log("Stan:" + lobbyConnection.State);
 
-            GameController.Instance.ShowLobbyScreen(elementsdIDs);
+            //await matchmakingConnection.StopAsync();
+
+            await lobbyConnection.InvokeAsync("JoinLobby", matchId);
+
+            // download my available characters
+
+            // when im ready, send info
+            
 
         } catch (Exception e)
         {
             text.text += "Connection failed" + e.Message;
             Debug.LogError("Connection failed" + e.Message);
         }
-        
+    }
+
+    
+
+    public void LoadMyCharacters()
+    {
+        StartCoroutine(CharactersAPI.SendGetCharactersRequest(
+            onSuccess: (charactersList) => {
+                foreach (var c in charactersList)
+                    GameController.Instance.CreateCharacterPickOption(c);
+            },
+            onError: (a) => { }
+            ));
     }
 }

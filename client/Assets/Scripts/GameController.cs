@@ -1,10 +1,12 @@
 using Assets.Scripts;
+using Assets.Scripts.Communication.ResponseModels;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Assets.Scripts.Mapping;
 
 /// <summary>
 /// Main controlling game class. It connects everything that is used in game.
@@ -45,6 +47,8 @@ public class GameController : MonoBehaviour
 
     public GameObject lobbyScreen;
     public TextMeshProUGUI lobbyScreenText;
+    public GameObject charactersMenu;
+    public GameObject characterDisplayPrefab;
 
     private void Start()
     {
@@ -129,5 +133,13 @@ public class GameController : MonoBehaviour
     {
         lobbyScreen.SetActive(true);
         lobbyScreenText.text = elementIDs.ToArray().ToString();
+    }
+
+    public void CreateCharacterPickOption(CharacterResponse characterResponse)
+    {
+        Sprite characterImage = CharacterIDToCharacterSprite.GetImageOfId(characterResponse.Id);
+
+        GameObject go = Instantiate(characterDisplayPrefab, charactersMenu.transform);
+        go.GetComponent<CharacterDisplay>().ChangeImage(characterImage);
     }
 }
