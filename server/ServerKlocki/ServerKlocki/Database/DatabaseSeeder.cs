@@ -4,6 +4,9 @@ using ServerKlocki.Database.Models;
 
 namespace ServerKlocki.Database
 {
+    /// <summary>
+    /// Simple seeder. For now used as a tool for debugging.
+    /// </summary>
     public class DatabaseSeeder
     {
         public static void Seed(DatabaseContext context)

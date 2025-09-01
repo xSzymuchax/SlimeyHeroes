@@ -11,7 +11,7 @@ using UnityEngine.Networking;
 namespace Assets.Scripts.Communication
 {
     /// <summary>
-    /// Class used for communication with characters API.
+    /// Class used for communication with server's characters API.
     /// </summary>
     public class CharactersAPI
     {
@@ -20,15 +20,15 @@ namespace Assets.Scripts.Communication
         /// </summary>
         /// <param name="onSuccess">success handler</param>
         /// <param name="onError">error handler</param>
-        /// <returns>on success, leturns list of CharacterResponse objects</returns>
+        /// <returns>list of CharacterResponse objects</returns>
         public static async Task<List<CharacterResponse>> GetUnlockedCharacters()
         {
-            string charactersEndpoint = NetworkController.ServerAdress + "/characters";
+            string charactersEndpoint = NetworkHelper.ServerAdress + "/characters";
 
             using (UnityWebRequest request = new UnityWebRequest(charactersEndpoint, "GET"))
             {
                 request.SetRequestHeader("Content-Type", "application/json");
-                request.SetRequestHeader("Authorization", $"Bearer {NetworkController.TokenJWT}");
+                request.SetRequestHeader("Authorization", $"Bearer {NetworkHelper.TokenJWT}");
                 request.downloadHandler = new DownloadHandlerBuffer();
 
                 var request_state = request.SendWebRequest();
@@ -39,8 +39,6 @@ namespace Assets.Scripts.Communication
                 if (request.result == UnityWebRequest.Result.Success)
                 {
                     string json = request.downloadHandler.text;
-                    // Debug.Log(json);
-
                     return JsonDecoder.FromJson<CharacterResponse>(json).ToList();
                 }
                 else

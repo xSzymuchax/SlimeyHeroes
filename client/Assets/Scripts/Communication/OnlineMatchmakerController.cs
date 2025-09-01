@@ -30,9 +30,9 @@ public class OnlineMatchmakerController : MonoBehaviour
     public async void ConnectToMatchmakerService()
     {
         matchmakingConnection = new HubConnectionBuilder()
-            .WithUrl(NetworkController.ServerAdress + "/matchmaker", options =>
+            .WithUrl(NetworkHelper.ServerAdress + "/matchmaker", options =>
             {
-                options.AccessTokenProvider = () => Task.FromResult(NetworkController.TokenJWT);
+                options.AccessTokenProvider = () => Task.FromResult(NetworkHelper.TokenJWT);
             })
             .WithAutomaticReconnect()
             .Build();
@@ -100,9 +100,9 @@ public class OnlineMatchmakerController : MonoBehaviour
     {
         Debug.Log("konektuje do lobbi");
         lobbyConnection = new HubConnectionBuilder()
-            .WithUrl(NetworkController.ServerAdress + $"/lobby", options =>
+            .WithUrl(NetworkHelper.ServerAdress + $"/lobby", options =>
             {
-                options.AccessTokenProvider = () => Task.FromResult(NetworkController.TokenJWT);
+                options.AccessTokenProvider = () => Task.FromResult(NetworkHelper.TokenJWT);
             })
             .WithAutomaticReconnect()
             .Build();
@@ -118,7 +118,10 @@ public class OnlineMatchmakerController : MonoBehaviour
             
         });
 
-
+        lobbyConnection.On("GameStart", () =>
+        {
+            // TODO - go to the game (we are in matchmaker now)
+        });
 
         // StartCountdown, seconds
         // TODO - counter

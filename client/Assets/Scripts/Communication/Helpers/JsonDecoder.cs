@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace Assets.Scripts.Communication
 {
+    /// <summary>
+    /// Helper class for easily decoding json data from APIs.
+    /// </summary>
     public class JsonDecoder
     {
         private class Wrapper<T>

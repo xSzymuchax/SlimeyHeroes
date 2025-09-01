@@ -8,6 +8,9 @@ using UnityEngine.UIElements;
 
 namespace Assets.Scripts.Mapping
 {
+    /// <summary>
+    /// Mapping of characterId to the corresponding sprite.
+    /// </summary>
     public class CharacterIDToCharacterSprite : MonoBehaviour
     {
         private static Dictionary<int, string> _map = new Dictionary<int, string>()
@@ -18,6 +21,11 @@ namespace Assets.Scripts.Mapping
             { 4, "debugCharacterImage" }
         };
 
+        /// <summary>
+        /// Function that mapps Id to corresponding sprites.
+        /// </summary>
+        /// <param name="id">id of asked character</param>
+        /// <returns>Sprite of the character</returns>
         public static Sprite GetImageOfId(int id)
         {
             if (_map.TryGetValue(id, out string spriteName))

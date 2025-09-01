@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Network controller. This should be the main part of communication.
+/// Network helper. Contains server adress and user's token.
 /// </summary>
-public class NetworkController : MonoBehaviour
+public class NetworkHelper : MonoBehaviour
 {
     private static string _serverAdress = "https://localhost:3000";
     private static string _token;

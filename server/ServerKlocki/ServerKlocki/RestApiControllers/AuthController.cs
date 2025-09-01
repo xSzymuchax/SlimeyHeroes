@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using ServerKlocki.Helpers;
 
 namespace ServerKlocki.Controllers
 {
@@ -15,35 +16,12 @@ namespace ServerKlocki.Controllers
     public class AuthController : ControllerBase
     {
         private readonly DatabaseContext _context;
-        private readonly IConfiguration _config;
+        private JWTTokenGenerator _tokenGenerator;
 
         public AuthController(DatabaseContext context, IConfiguration config)
         {
             _context = context;
-            _config = config;
-        }
-
-        // generates token with some user information
-        private string GenerateJWTToken(User user)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-                new Claim("id", user.Id.ToString())
-            };
-
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            _tokenGenerator = new JWTTokenGenerator(config);
         }
 
         [HttpPost("register")]
@@ -103,10 +81,25 @@ namespace ServerKlocki.Controllers
                 return NotFound();
             }
 
-            string newToken = GenerateJWTToken(user);
-            Debug.WriteLine(newToken);
+            string newToken = _tokenGenerator.GenerateJWTToken(user);
+            //Debug.WriteLine(newToken);
             TokenResponseDTO tokenResponseDTO = new TokenResponseDTO() { message = "Login Successful", token = newToken };
             return Ok(tokenResponseDTO);
         }
     }
 }
+
+
+
+/*
+ * [HttpPost]
+        [SwaggerOperation(
+            Summary = "Returns number multiplied by 2",
+            Description = "Return only if valid number, else returns error 500"
+        )]
+        [SwaggerRequestExample(typeof(NumberDTO), typeof(NumberDTOExample))]
+        [ProducesResponseType(typeof(NumberDTO), 200)]
+        [ProducesResponseType(typeof(string), 500)]
+        [SwaggerResponseExample(200, typeof(NumberDTOExample))]
+        [SwaggerResponseExample(500, typeof(Error500Example))]
+ * */

@@ -11,7 +11,7 @@ using UnityEngine.UI;
 /// Authorization controller. Used for Register and Login of the users.
 /// Class uses corresponding UI text elements, that should be assigned in editor.
 /// </summary>
-public class AuthController : MonoBehaviour
+public class AuthAPI : MonoBehaviour
 {
     // error output
     public TextMeshProUGUI errorOutput;
@@ -32,9 +32,10 @@ public class AuthController : MonoBehaviour
         // prepare data
         var json = JsonUtility.ToJson(registerData);
         byte[] raw = Encoding.UTF8.GetBytes(json);
-        string registerEndpoint = NetworkController.ServerAdress + "/auth/register";
+        string registerEndpoint = NetworkHelper.ServerAdress + "/auth/register";
+        //Debug.Log(json);
 
-        Debug.Log(json);
+
         // request
         using (UnityWebRequest request = new UnityWebRequest(registerEndpoint, "POST"))
         {
@@ -85,7 +86,7 @@ public class AuthController : MonoBehaviour
         // prepare data
         var json = JsonUtility.ToJson(loginData);
         byte[] raw = Encoding.UTF8.GetBytes(json);
-        string loginEndpoint = NetworkController.ServerAdress + "/auth/login";
+        string loginEndpoint = NetworkHelper.ServerAdress + "/auth/login";
 
         using (UnityWebRequest request = new UnityWebRequest(loginEndpoint, "POST"))
         {
@@ -100,8 +101,8 @@ public class AuthController : MonoBehaviour
                 string serverResponse = request.downloadHandler.text;
                 TokenResponse tokenResponse = JsonUtility.FromJson<TokenResponse>(serverResponse);
 
-                NetworkController.SetToken(tokenResponse.token);
-                Debug.Log($"Received authorization token: {NetworkController.TokenJWT}");
+                NetworkHelper.SetToken(tokenResponse.token);
+                Debug.Log($"Received authorization token: {NetworkHelper.TokenJWT}");
 
                 onSuccess?.Invoke();
             }
@@ -127,8 +128,5 @@ public class AuthController : MonoBehaviour
                 MenuController.Instance.ShowMainMenuAfterLogin();
             }
         ));
-
-        // wykonaj dopiero po zalogowaniu
-        // blablabla
     }
 }
