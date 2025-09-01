@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServerKlocki.Database;
 using Microsoft.EntityFrameworkCore;
 using ServerKlocki.Mapping;
+using ServerKlocki.DTOs;
 
 namespace ServerKlocki.Controllers
 {
@@ -29,6 +30,12 @@ namespace ServerKlocki.Controllers
 
             var result = await _dbContext.UserOwnCharacters
                 .Where(x => x.UserId == userId)
+                .Select(x => new CharacterDTO
+                { 
+                    CharacterId = x.CharacterId,
+                    Level = x.CharacterLevel,
+                    SoulsAmount = x.SoulsAmount
+                })
                 .ToListAsync();
 
             return Ok(result);

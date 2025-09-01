@@ -45,6 +45,7 @@ public class GameController : MonoBehaviour
     public GameObject naturecharacterPrefab;
     public GameObject ligthningcharacterPrefab;
 
+    public GameObject gameScreen;
     public GameObject lobbyScreen;
     public TextMeshProUGUI lobbyScreenText;
     public GameObject charactersMenu;
@@ -131,15 +132,18 @@ public class GameController : MonoBehaviour
 
     public void ShowLobbyScreen(List<int> elementIDs)
     {
+        gameScreen.SetActive(true);
         lobbyScreen.SetActive(true);
         lobbyScreenText.text = elementIDs.ToArray().ToString();
     }
 
     public void CreateCharacterPickOption(CharacterResponse characterResponse)
     {
-        Sprite characterImage = CharacterIDToCharacterSprite.GetImageOfId(characterResponse.Id);
+        Sprite characterImage = CharacterIDToCharacterSprite.GetImageOfId(characterResponse.characterId);
 
         GameObject go = Instantiate(characterDisplayPrefab, charactersMenu.transform);
-        go.GetComponent<CharacterDisplay>().ChangeImage(characterImage);
+        
+        if (characterImage != null)
+            go.GetComponent<CharacterDisplay>().ChangeImage(characterImage);
     }
 }

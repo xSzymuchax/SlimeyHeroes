@@ -10,25 +10,31 @@ namespace Assets.Scripts.Mapping
 {
     public class CharacterIDToCharacterSprite : MonoBehaviour
     {
-        private static Dictionary<int, string> _map;
-
-        private void Start()
-        {
-            _map = new Dictionary<int, string>()
+        private static Dictionary<int, string> _map = new Dictionary<int, string>()
         {
             { 1, "debugCharacterImage" },
             { 2, "debugCharacterImage" },
             { 3, "debugCharacterImage" },
             { 4, "debugCharacterImage" }
         };
-        }
-
-
 
         public static Sprite GetImageOfId(int id)
         {
-            Sprite sprite = Resources.Load<Sprite>($"Sprite/Characters/{_map[id]}");
-            return sprite;
+            if (_map.TryGetValue(id, out string spriteName))
+            {
+                Sprite sprite = Resources.Load<Sprite>($"Sprite/Characters/{spriteName}");
+
+                if (sprite == null)
+                {
+                    Debug.LogError($"Found sprite name but not found sprite resource: id: {id}, name: {spriteName}");
+                }
+                return sprite;
+            }
+            else
+            {
+                Debug.LogError($"No mapping for sprite with ID: {id}");
+                return null;
+            }
         }
     }
 }

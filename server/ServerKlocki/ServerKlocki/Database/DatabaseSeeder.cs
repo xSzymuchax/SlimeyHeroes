@@ -11,7 +11,9 @@ namespace ServerKlocki.Database
             if (!context.Users.Any())
             {
                 context.AddRange(
-                    new User { Email = "mucha@example.org", Password = "mucha", Username = "mucha", Trophies = 69 }
+                    new User { Email = "mucha@example.org", Password = "mucha", Username = "mucha", Trophies = 69 },
+                    new User { Email = "a", Password = "a", Username = "a", Trophies = 69 },
+                    new User { Email = "b", Password = "b", Username = "b", Trophies = 69 }
                 );
             }
 
@@ -53,7 +55,15 @@ namespace ServerKlocki.Database
                     new UserOwnCharacters { CharacterId = 1, CharacterLevel = 1, SoulsAmount = 0, UserId = 1},
                     new UserOwnCharacters { CharacterId = 2, CharacterLevel = 1, SoulsAmount = 0, UserId = 1},
                     new UserOwnCharacters { CharacterId = 3, CharacterLevel = 1, SoulsAmount = 0, UserId = 1},
-                    new UserOwnCharacters { CharacterId = 4, CharacterLevel = 1, SoulsAmount = 0, UserId = 1}
+                    new UserOwnCharacters { CharacterId = 4, CharacterLevel = 1, SoulsAmount = 0, UserId = 1},
+                    new UserOwnCharacters { CharacterId = 1, CharacterLevel = 1, SoulsAmount = 0, UserId = 2},
+                    new UserOwnCharacters { CharacterId = 2, CharacterLevel = 1, SoulsAmount = 0, UserId = 2},
+                    new UserOwnCharacters { CharacterId = 3, CharacterLevel = 1, SoulsAmount = 0, UserId = 2},
+                    new UserOwnCharacters { CharacterId = 4, CharacterLevel = 1, SoulsAmount = 0, UserId = 2},
+                    new UserOwnCharacters { CharacterId = 1, CharacterLevel = 1, SoulsAmount = 0, UserId = 3},
+                    new UserOwnCharacters { CharacterId = 2, CharacterLevel = 1, SoulsAmount = 0, UserId = 3},
+                    new UserOwnCharacters { CharacterId = 3, CharacterLevel = 1, SoulsAmount = 0, UserId = 3},
+                    new UserOwnCharacters { CharacterId = 4, CharacterLevel = 1, SoulsAmount = 0, UserId = 3}
                 );
             }
 

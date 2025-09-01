@@ -1,8 +1,10 @@
 using Assets.Scripts.Communication;
+using Assets.Scripts.Communication.ResponseModels;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -18,7 +20,13 @@ public class OnlineMatchmakerController : MonoBehaviour
     private HubConnection matchmakingConnection;
     private HubConnection lobbyConnection;
 
-    public TextMeshProUGUI text;
+    private SynchronizationContext _synchronizationContext;
+
+    private void Start()
+    {
+        _synchronizationContext = SynchronizationContext.Current;
+    }
+
     public async void ConnectToMatchmakerService()
     {
         matchmakingConnection = new HubConnectionBuilder()
@@ -31,11 +39,20 @@ public class OnlineMatchmakerController : MonoBehaviour
 
         // TODO - to sie chyba przewraca
         matchmakingConnection.On<string>("MatchFound", async (matchId) => {
-            Debug.Log($"Match found! -> matchID: {matchId}");
-            text.text += $"Match found! -> matchID: {matchId}";
+            try
+            {
+                Debug.Log($"Match found! -> matchID: {matchId}");
+                //text.text += $"Match found! -> matchID: {matchId}";
 
-            _ = ConnectToLobby(matchId);
+                _ = ConnectToLobby(matchId);
 
+                Debug.Log("a czy to sie wykonuje?");
+
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("blad handlera: " + e.Message);
+            }
             //await matchmakingConnection.StopAsync();
         });
 
@@ -48,13 +65,11 @@ public class OnlineMatchmakerController : MonoBehaviour
         {
             await matchmakingConnection.StartAsync();
             Debug.Log("Connected to server");
-            text.text += "Connected to server";
 
             await matchmakingConnection.InvokeAsync("FindMatch");
         }
         catch (Exception ex)
         {
-            text.text += "Connection failed" + ex.Message;
             Debug.LogError("Connection failed" + ex.Message);
         }
     }
@@ -77,7 +92,6 @@ public class OnlineMatchmakerController : MonoBehaviour
         }
         catch (Exception ex)
         {
-            text.text += "Connection failed" + ex.Message;
             Debug.LogError("Connection failed" + ex.Message);
         }
     }
@@ -86,7 +100,7 @@ public class OnlineMatchmakerController : MonoBehaviour
     {
         Debug.Log("konektuje do lobbi");
         lobbyConnection = new HubConnectionBuilder()
-            .WithUrl(NetworkController.ServerAdress + $"/lobby/?matchId={matchId}", options =>
+            .WithUrl(NetworkController.ServerAdress + $"/lobby", options =>
             {
                 options.AccessTokenProvider = () => Task.FromResult(NetworkController.TokenJWT);
             })
@@ -94,10 +108,14 @@ public class OnlineMatchmakerController : MonoBehaviour
             .Build();
 
         List<int> elementsdIDs = new List<int>();
-
         lobbyConnection.On<List<int>>("DrawnElements", (elements) => {
             elementsdIDs = elements;
-            GameController.Instance.ShowLobbyScreen(elements);
+
+            _synchronizationContext.Post(_ =>
+            {
+                // TODO - load elements
+            }, null);
+            
         });
 
 
@@ -106,8 +124,12 @@ public class OnlineMatchmakerController : MonoBehaviour
         // TODO - counter
         lobbyConnection.On<int>("StartCountdown", (seconds) => {
             Console.WriteLine("received: StartCountdown");
-            GameController.Instance.ShowLobbyScreen(elementsdIDs);
-            LoadMyCharacters();
+
+            _synchronizationContext.Post(_ =>
+            {
+                GameController.Instance.ShowLobbyScreen(elementsdIDs);
+                LoadMyCharacters();
+            }, null); 
         });
 
         // GameStart
@@ -123,26 +145,39 @@ public class OnlineMatchmakerController : MonoBehaviour
 
             // download my available characters
 
+
             // when im ready, send info
-            
+
 
         } catch (Exception e)
         {
-            text.text += "Connection failed" + e.Message;
             Debug.LogError("Connection failed" + e.Message);
         }
     }
 
     
 
-    public void LoadMyCharacters()
+    public async Task LoadMyCharacters()
     {
-        StartCoroutine(CharactersAPI.SendGetCharactersRequest(
-            onSuccess: (charactersList) => {
-                foreach (var c in charactersList)
-                    GameController.Instance.CreateCharacterPickOption(c);
-            },
-            onError: (a) => { }
-            ));
+        List<CharacterResponse> characters = await CharactersAPI.GetUnlockedCharacters();
+
+        characters.ForEach(x =>
+        {
+            Debug.Log($"characterId: {x.characterId}, level: {x.level}, souls: {x.soulsAmount}");
+        });
+
+        characters.ForEach(x =>
+        {
+            try
+            {
+                Debug.Log("tworze postac");
+                GameController.Instance.CreateCharacterPickOption(x);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.Message);
+            }
+            
+        });
     }
 }

@@ -2516,7 +2516,8 @@ MonoBehaviour:
   watercharacterPrefab: {fileID: 1150848516441943578, guid: 2aed0d22bc615174e909e41aa40ac671, type: 3}
   naturecharacterPrefab: {fileID: 1150848516441943578, guid: 1f9f8b8511468ff408327a8b4591ef9c, type: 3}
   ligthningcharacterPrefab: {fileID: 1150848516441943578, guid: 10281bafde011484cb3ee09d65e3ed66, type: 3}
-  lobbyScreen: {fileID: 0}
+  gameScreen: {fileID: 622461062}
+  lobbyScreen: {fileID: 636782170}
   lobbyScreenText: {fileID: 13667593}
   charactersMenu: {fileID: 574562874}
   characterDisplayPrefab: {fileID: 2998830333351799694, guid: f7ad18184131d7943ae0f6ad3bdd6f3d, type: 3}
@@ -5240,7 +5241,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6898b6428b25c4458e24215f152a2f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 188446663}
 --- !u!114 &1060484961
 MonoBehaviour:
   m_ObjectHideFlags: 0

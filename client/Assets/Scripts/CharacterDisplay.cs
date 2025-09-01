@@ -1,14 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class CharacterDisplay : MonoBehaviour
 {
-    public GameObject characterImage;
+    private Image _characterImage;
 
-    public void ChangeImage(Sprite image)
+    public void ChangeImage(Sprite sprite)
     {
-        characterImage.GetComponent<Image>().sprite = image;
+        _characterImage = transform.Find("CharacterImage").GetComponent<Image>();
+
+        if (sprite == null)
+        {
+            Debug.LogError("Sprite is null!");
+            return;
+        }
+
+        if (_characterImage == null)
+        {
+            Debug.LogError("No Image component assigned!");
+            return;
+        }
+
+        _characterImage.sprite = sprite;
     }
 }

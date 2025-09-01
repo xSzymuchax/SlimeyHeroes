@@ -10,12 +10,6 @@ using UnityEngine.Networking;
 
 namespace Assets.Scripts.Communication
 {
-    [Serializable]
-    public class Wrapper<T>
-    {
-        public T[] Items;
-    }
-
     /// <summary>
     /// Class used for communication with characters API.
     /// </summary>
@@ -27,37 +21,32 @@ namespace Assets.Scripts.Communication
         /// <param name="onSuccess">success handler</param>
         /// <param name="onError">error handler</param>
         /// <returns>on success, leturns list of CharacterResponse objects</returns>
-        public static IEnumerator SendGetCharactersRequest(System.Action<List<CharacterResponse>> onSuccess, System.Action<string> onError)
+        public static async Task<List<CharacterResponse>> GetUnlockedCharacters()
         {
             string charactersEndpoint = NetworkController.ServerAdress + "/characters";
 
-            using (UnityWebRequest request = new UnityWebRequest())
+            using (UnityWebRequest request = new UnityWebRequest(charactersEndpoint, "GET"))
             {
                 request.SetRequestHeader("Content-Type", "application/json");
                 request.SetRequestHeader("Authorization", $"Bearer {NetworkController.TokenJWT}");
                 request.downloadHandler = new DownloadHandlerBuffer();
 
-                yield return request.SendWebRequest();
+                var request_state = request.SendWebRequest();
 
-                try
+                while (!request_state.isDone)
+                    await Task.Yield();
+
+                if (request.result == UnityWebRequest.Result.Success)
                 {
+                    string json = request.downloadHandler.text;
+                    // Debug.Log(json);
 
-
-                    if (request.result == UnityWebRequest.Result.Success)
-                    {
-                        string json = request.downloadHandler.text;
-
-                        var wrapper = JsonUtility.FromJson<Wrapper<CharacterResponse>>(json);
-                        onSuccess?.Invoke(wrapper.Items.ToList());
-                    }
-                    else
-                    {
-                        onError?.Invoke(request.error);
-                    }
+                    return JsonDecoder.FromJson<CharacterResponse>(json).ToList();
                 }
-                catch (Exception e)
+                else
                 {
-                    onError?.Invoke(e.Message);
+                    Debug.Log($"Error decoding characters API response.");
+                    throw new Exception(request.error);
                 }
             }
         }

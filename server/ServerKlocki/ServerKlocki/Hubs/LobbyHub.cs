@@ -29,8 +29,6 @@ namespace ServerKlocki.Hubs
             // add connection to broadcast group
             await Groups.AddToGroupAsync(Context.ConnectionId, matchId);
 
-            await Task.Delay(50);
-
             // create lobby
             LobbyState lobby;
             if (!lobbies.ContainsKey(matchId))
@@ -118,7 +116,7 @@ namespace ServerKlocki.Hubs
 
             lock (_lock)
             {
-                PlayerConfiguration pc = lobby.Players.Find(x => playerId == x.PlayerId);
+                PlayerConfiguration? pc = lobby.Players.Find(x => playerId == x.PlayerId);
                 
                 if (pc != null)
                 {

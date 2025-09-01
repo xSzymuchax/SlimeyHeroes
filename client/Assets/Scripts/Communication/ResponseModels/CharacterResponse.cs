@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Assets.Scripts.Communication.ResponseModels
 {
+    [Serializable]
     public class CharacterResponse
     {
-        public int Id { get; set; }
-        public int Level { get; set; }
-        public int SoulsAmount { get; set; }
+        public int characterId;
+        public int level;
+        public int soulsAmount;
     }
 }
